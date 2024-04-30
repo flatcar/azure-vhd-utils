@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.5.2
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.3.2
+	github.com/coreos/pkg v0.0.0-20240122114842-bbd7aa9bf6fb
 	gopkg.in/urfave/cli.v1 v1.20.0
 )
 
