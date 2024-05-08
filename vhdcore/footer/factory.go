@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // Factory type is used to create Footer instance by reading vhd footer section.

@@ -3,8 +3,8 @@ package block
 import (
 	"fmt"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // SectorFactory type is used to create Sector instance by reading 512 byte sector from block's 'data section'.

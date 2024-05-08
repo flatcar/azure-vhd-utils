@@ -7,7 +7,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
 )
 
 // VhdWriter is the writer used by various components responsible for writing header and

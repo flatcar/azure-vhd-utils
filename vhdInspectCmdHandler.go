@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"text/template"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/block/bitmap"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/footer"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/vhdfile"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/block/bitmap"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/footer"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/vhdfile"
 	"gopkg.in/urfave/cli.v1"
 )
 

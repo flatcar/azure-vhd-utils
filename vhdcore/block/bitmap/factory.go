@@ -1,8 +1,8 @@
 package bitmap
 
 import (
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/bat"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/bat"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // Factory type is used to create BitMap instance by reading 'bitmap section' of a block.

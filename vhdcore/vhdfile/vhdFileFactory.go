@@ -4,10 +4,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/bat"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/footer"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/header"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/bat"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/footer"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/header"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // FileFactory is a type to create VhdFile representing VHD in the local machine

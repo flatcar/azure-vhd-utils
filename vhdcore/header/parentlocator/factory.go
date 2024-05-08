@@ -2,7 +2,7 @@ package parentlocator
 
 import (
 	"fmt"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // Factory type is used to create ParentLocator instance by reading one entry

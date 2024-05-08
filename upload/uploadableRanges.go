@@ -1,8 +1,8 @@
 package upload
 
 import (
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/diskstream"
 )
 
 // LocateUploadableRanges detects the uploadable ranges in a VHD stream, size of each range is at most pageSizeInBytes.

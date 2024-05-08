@@ -1,4 +1,4 @@
-module github.com/Microsoft/azure-vhd-utils
+module github.com/flatcar/azure-vhd-utils
 
 require (
 	github.com/Azure/azure-sdk-for-go v5.0.0-beta.0.20161118192335-3b1282355199+incompatible

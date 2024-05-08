@@ -1,9 +1,9 @@
 package block
 
 import (
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/block/bitmap"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/block/bitmap"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
 )
 
 // DynamicDiskBlockFactory is a type which is used for following purposes

@@ -10,12 +10,13 @@ import (
 	"strings"
 
 	"github.com/Azure/azure-sdk-for-go/storage"
-	"github.com/Microsoft/azure-vhd-utils/upload"
-	"github.com/Microsoft/azure-vhd-utils/upload/metadata"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/validator"
 	"gopkg.in/urfave/cli.v1"
+
+	"github.com/flatcar/azure-vhd-utils/upload"
+	"github.com/flatcar/azure-vhd-utils/upload/metadata"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/diskstream"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/validator"
 )
 
 func vhdUploadCmdHandler() cli.Command {

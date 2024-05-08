@@ -6,7 +6,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
 )
 
 // VhdReader is the reader used by various components responsible for reading different

@@ -3,9 +3,9 @@ package block
 import (
 	"fmt"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/block/bitmap"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/block/bitmap"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
 )
 
 // Block type represents Block of a vhd. A block of a dynamic or differential vhd starts with a

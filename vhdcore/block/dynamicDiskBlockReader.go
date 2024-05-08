@@ -3,9 +3,9 @@ package block
 import (
 	"io"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/bat"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/footer"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/bat"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/footer"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // DynamicDiskBlockReader type satisfies BlockDataReader interface,

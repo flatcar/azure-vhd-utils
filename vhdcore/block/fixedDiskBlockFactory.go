@@ -4,8 +4,8 @@ import (
 	"log"
 	"math"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
 )
 
 // FixedDiskBlockFactory is a type which is used for following purposes

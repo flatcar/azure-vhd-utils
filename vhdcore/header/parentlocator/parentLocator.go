@@ -1,7 +1,7 @@
 package parentlocator
 
 import (
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
 	"log"
 	"strings"
 )
