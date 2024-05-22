@@ -30,18 +30,19 @@ func NewBinaryWriter(to io.WriterAt, order binary.ByteOrder, size int64) *Binary
 }
 
 // WriteBytes writes a byte slice to the underlying writer at offset off.
-func (w *BinaryWriter) WriteBytes(off int64, value []byte) {
+func (w *BinaryWriter) WriteBytesAt(off int64, value []byte) {
 	w.to.WriteAt(value, off)
 }
 
 // WriteByte write a byte value to the underlying writer at offset off.
-func (w *BinaryWriter) WriteByte(off int64, value byte) {
+func (w *BinaryWriter) WriteByteAt(off int64, value byte) error {
 	w.buffer[0] = value
 	w.to.WriteAt(w.buffer[:1], off)
+	return nil
 }
 
 // WriteBoolean write a boolean value to the underlying writer at offset off.
-func (w *BinaryWriter) WriteBoolean(off int64, value bool) {
+func (w *BinaryWriter) WriteBooleanAt(off int64, value bool) {
 	if value {
 		w.buffer[0] = 1
 	} else {
@@ -52,42 +53,42 @@ func (w *BinaryWriter) WriteBoolean(off int64, value bool) {
 }
 
 // WriteInt16 encodes an int16 and write it in the underlying writer at offset off.
-func (w *BinaryWriter) WriteInt16(off int64, value int16) {
+func (w *BinaryWriter) WriteInt16At(off int64, value int16) {
 	w.order.PutUint16(w.buffer, uint16(value))
 	w.to.WriteAt(w.buffer[:2], off)
 }
 
 // WriteUInt16 encodes an uint16 and write it in the underlying writer at offset off.
-func (w *BinaryWriter) WriteUInt16(off int64, value uint16) {
+func (w *BinaryWriter) WriteUInt16At(off int64, value uint16) {
 	w.order.PutUint16(w.buffer, value)
 	w.to.WriteAt(w.buffer[:2], off)
 }
 
 // WriteInt32 encodes an int32 and write it in the underlying writer at offset off.
-func (w *BinaryWriter) WriteInt32(off int64, value int32) {
+func (w *BinaryWriter) WriteInt32At(off int64, value int32) {
 	w.order.PutUint32(w.buffer, uint32(value))
 	w.to.WriteAt(w.buffer[:4], off)
 }
 
 // WriteUInt32 encodes an uint32 and write it in the underlying writer at offset off.
-func (w *BinaryWriter) WriteUInt32(off int64, value uint32) {
+func (w *BinaryWriter) WriteUInt32At(off int64, value uint32) {
 	w.order.PutUint32(w.buffer, value)
 	w.to.WriteAt(w.buffer[:4], off)
 }
 
 // WriteInt64 encodes an int64 and write it in the underlying writer at offset off.
-func (w *BinaryWriter) WriteInt64(off int64, value int64) {
+func (w *BinaryWriter) WriteInt64At(off int64, value int64) {
 	w.order.PutUint64(w.buffer, uint64(value))
 	w.to.WriteAt(w.buffer[:8], off)
 }
 
 // WriteUInt64 encodes an uint64 and write it in the underlying writer at offset off.
-func (w *BinaryWriter) WriteUInt64(off int64, value uint64) {
+func (w *BinaryWriter) WriteUInt64At(off int64, value uint64) {
 	w.order.PutUint64(w.buffer, value)
 	w.to.WriteAt(w.buffer[:8], off)
 }
 
 // WriteString writes a string to the underlying writer at offset off.
-func (w *BinaryWriter) WriteString(off int64, value string) {
+func (w *BinaryWriter) WriteStringAt(off int64, value string) {
 	w.to.WriteAt([]byte(value), off)
 }

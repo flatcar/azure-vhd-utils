@@ -46,7 +46,7 @@ func (r *DynamicDiskBlockReader) Read(block *Block) ([]byte, error) {
 
 	blockDataByteOffset := r.blockAllocationTable.GetBlockDataAddress(blockIndex)
 	blockDataBuffer := make([]byte, r.blockSizeInBytes)
-	n, err := r.vhdReader.ReadBytes(blockDataByteOffset, blockDataBuffer)
+	n, err := r.vhdReader.ReadBytesAt(blockDataByteOffset, blockDataBuffer)
 	if err == io.ErrUnexpectedEOF {
 		return blockDataBuffer[:n], nil
 	}

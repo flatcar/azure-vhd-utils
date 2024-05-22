@@ -27,7 +27,7 @@ func (p *Pool) Less(i, j int) bool {
 }
 
 // Swap swaps the Worker instances at the given indices i and j
-func (p Pool) Swap(i, j int) {
+func (p *Pool) Swap(i, j int) {
 	p.Workers[i], p.Workers[j] = p.Workers[j], p.Workers[i]
 	p.Workers[i].Index = i
 	p.Workers[j].Index = j

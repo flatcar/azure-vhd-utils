@@ -31,7 +31,7 @@ func (f *BlockAllocationTableFactory) Create() (*BlockAllocationTable, error) {
 	batEntryOffset := f.vhdHeader.TableOffset
 	bat := make([]uint32, batEntriesCount)
 	for i := uint32(0); i < batEntriesCount; i++ {
-		bat[i], err = f.vhdReader.ReadUInt32(batEntryOffset)
+		bat[i], err = f.vhdReader.ReadUInt32At(batEntryOffset)
 		if err != nil {
 			return nil, NewBlockAllocationTableParseError(i, err)
 		}

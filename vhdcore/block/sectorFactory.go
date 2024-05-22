@@ -44,7 +44,7 @@ func (f *SectorFactory) Create(block *Block, sectorIndex uint32) (*Sector, error
 	blockDataSectionByteOffset := f.getBlockAddress(blockIndex)
 	sectorByteOffset := blockDataSectionByteOffset + vhdcore.VhdSectorLength*int64(sectorIndex)
 	sectorBuf := make([]byte, vhdcore.VhdSectorLength)
-	if _, err := f.vhdReader.ReadBytes(sectorByteOffset, sectorBuf); err != nil {
+	if _, err := f.vhdReader.ReadBytesAt(sectorByteOffset, sectorBuf); err != nil {
 		return nil, NewSectorReadError(blockIndex, sectorIndex, err)
 	}
 

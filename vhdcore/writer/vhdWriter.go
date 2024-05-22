@@ -36,9 +36,9 @@ func NewVhdWriterFromByteSlice(b []byte) *VhdWriter {
 
 // WriteTimeStamp writes vhd timestamp represented by the given time to underlying source
 // starting at byte offset off.
-func (r *VhdWriter) WriteTimeStamp(off int64, time *time.Time) {
+func (r *VhdWriter) WriteTimeStampAt(off int64, time *time.Time) {
 	vhdTimeStamp := vhdcore.NewVhdTimeStamp(time)
-	r.WriteUInt32(off, vhdTimeStamp.TotalSeconds)
+	r.WriteUInt32At(off, vhdTimeStamp.TotalSeconds)
 }
 
 // ByteSliceWriteAt is a type that satisfies io.WriteAt interface for byte slice.

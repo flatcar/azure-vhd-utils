@@ -26,7 +26,7 @@ func (f *Factory) Create(blockIndex uint32) (*BitMap, error) {
 	bitmapAbsoluteByteOffset := f.blockAllocationTable.GetBitmapAddress(blockIndex)
 	bitmapSizeInBytes := f.blockAllocationTable.GetBitmapSizeInBytes()
 	bitmapBytes := make([]byte, bitmapSizeInBytes)
-	if _, err := f.vhdReader.ReadBytes(bitmapAbsoluteByteOffset, bitmapBytes); err != nil {
+	if _, err := f.vhdReader.ReadBytesAt(bitmapAbsoluteByteOffset, bitmapBytes); err != nil {
 		return nil, NewParseError(blockIndex, err)
 	}
 	return NewBitMapFromByteSlice(bitmapBytes), nil

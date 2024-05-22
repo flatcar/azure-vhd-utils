@@ -36,8 +36,8 @@ func NewVhdReaderFromByteSlice(b []byte) *VhdReader {
 
 // ReadDateTime reads an encoded vhd timestamp from underlying source starting at byte
 // offset off and return it as a time.Time.
-func (r *VhdReader) ReadDateTime(off int64) (*time.Time, error) {
-	d, err := r.ReadUInt32(off)
+func (r *VhdReader) ReadDateTimeAt(off int64) (*time.Time, error) {
+	d, err := r.ReadUInt32At(off)
 	if err != nil {
 		return nil, err
 	}

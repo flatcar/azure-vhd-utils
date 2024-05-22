@@ -32,7 +32,7 @@ func (r *FixedDiskBlockReader) Read(block *Block) ([]byte, error) {
 	blockIndex := block.BlockIndex
 	blockByteOffset := int64(blockIndex) * int64(r.blockSizeInBytes)
 	blockDataBuffer := make([]byte, block.LogicalRange.Length())
-	n, err := r.vhdReader.ReadBytes(blockByteOffset, blockDataBuffer)
+	n, err := r.vhdReader.ReadBytesAt(blockByteOffset, blockDataBuffer)
 	if err == io.ErrUnexpectedEOF {
 		return blockDataBuffer[:n], nil
 	}

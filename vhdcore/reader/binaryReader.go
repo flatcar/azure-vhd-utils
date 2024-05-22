@@ -41,12 +41,12 @@ func NewBinaryReader(from ReadAtReader, order binary.ByteOrder, size int64) *Bin
 // copied and an error if fewer bytes were read. The error is EOF only if no bytes were
 // read. If an EOF happens after reading some but not all the bytes, ReadBytes returns
 // ErrUnexpectedEOF. On return, n == len(buf) if and only if err == nil.
-func (b *BinaryReader) ReadBytes(offset int64, buf []byte) (int, error) {
+func (b *BinaryReader) ReadBytesAt(offset int64, buf []byte) (int, error) {
 	return b.from.ReadAt(buf, offset)
 }
 
 // ReadByte reads a byte from underlying source starting at byte offset off and returns it.
-func (b *BinaryReader) ReadByte(offset int64) (byte, error) {
+func (b *BinaryReader) ReadByteAt(offset int64) (byte, error) {
 	if _, err := b.readToBuffer(1, offset); err != nil {
 		return 0, err
 	}
@@ -56,7 +56,7 @@ func (b *BinaryReader) ReadByte(offset int64) (byte, error) {
 
 // ReadBoolean reads a byte from underlying source starting at byte offset off and
 // returns it as a bool.
-func (b *BinaryReader) ReadBoolean(offset int64) (bool, error) {
+func (b *BinaryReader) ReadBooleanAt(offset int64) (bool, error) {
 	if _, err := b.readToBuffer(1, offset); err != nil {
 		return false, err
 	}
@@ -65,7 +65,7 @@ func (b *BinaryReader) ReadBoolean(offset int64) (bool, error) {
 
 // ReadUInt16 reads an encoded unsigned 2 byte integer from underlying source starting
 // at byte offset off and return it as a uint16.
-func (b *BinaryReader) ReadUInt16(offset int64) (uint16, error) {
+func (b *BinaryReader) ReadUInt16At(offset int64) (uint16, error) {
 	if _, err := b.readToBuffer(2, offset); err != nil {
 		return 0, err
 	}
@@ -74,7 +74,7 @@ func (b *BinaryReader) ReadUInt16(offset int64) (uint16, error) {
 
 // ReadInt16 reads an encoded signed 2 byte integer from underlying source starting
 // at byte offset off returns it as a int16.
-func (b *BinaryReader) ReadInt16(off int64) (int16, error) {
+func (b *BinaryReader) ReadInt16At(off int64) (int16, error) {
 	if _, err := b.readToBuffer(2, off); err != nil {
 		return 0, err
 	}
@@ -83,7 +83,7 @@ func (b *BinaryReader) ReadInt16(off int64) (int16, error) {
 
 // ReadUInt32 reads an encoded unsigned 4 byte integer from underlying source starting
 // at byte offset off returns it as a uint32.
-func (b *BinaryReader) ReadUInt32(off int64) (uint32, error) {
+func (b *BinaryReader) ReadUInt32At(off int64) (uint32, error) {
 	if _, err := b.readToBuffer(4, off); err != nil {
 		return 0, err
 	}
@@ -92,7 +92,7 @@ func (b *BinaryReader) ReadUInt32(off int64) (uint32, error) {
 
 // ReadInt32 reads an encoded signed 4 byte integer from underlying source starting
 // at byte offset off and returns it as a int32.
-func (b *BinaryReader) ReadInt32(off int64) (int32, error) {
+func (b *BinaryReader) ReadInt32At(off int64) (int32, error) {
 	if _, err := b.readToBuffer(4, off); err != nil {
 		return 0, err
 	}
@@ -101,7 +101,7 @@ func (b *BinaryReader) ReadInt32(off int64) (int32, error) {
 
 // ReadUInt64 reads an encoded unsigned 8 byte integer from underlying source starting
 // at byte offset off and returns it as a uint64.
-func (b *BinaryReader) ReadUInt64(off int64) (uint64, error) {
+func (b *BinaryReader) ReadUInt64At(off int64) (uint64, error) {
 	if _, err := b.readToBuffer(8, off); err != nil {
 		return 0, err
 	}
@@ -110,7 +110,7 @@ func (b *BinaryReader) ReadUInt64(off int64) (uint64, error) {
 
 // ReadInt64 reads an encoded signed 4 byte integer from underlying source starting
 // at byte offset off and and returns it as a int64.
-func (b *BinaryReader) ReadInt64(off int64) (int64, error) {
+func (b *BinaryReader) ReadInt64At(off int64) (int64, error) {
 	if _, err := b.readToBuffer(8, off); err != nil {
 		return 0, err
 	}
@@ -119,7 +119,7 @@ func (b *BinaryReader) ReadInt64(off int64) (int64, error) {
 
 // ReadUUID reads 16 byte character sequence from underlying source starting
 // at byte offset off and returns it as a UUID.
-func (b *BinaryReader) ReadUUID(off int64) (*common.UUID, error) {
+func (b *BinaryReader) ReadUUIDAt(off int64) (*common.UUID, error) {
 	if _, err := b.readToBuffer(16, off); err != nil {
 		return nil, err
 	}

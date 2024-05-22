@@ -123,7 +123,7 @@ func (f *Factory) Create() (*Footer, error) {
 // to the beginning of footer.
 func (f *Factory) readVhdCookie() (*vhdcore.Cookie, error) {
 	cookieData := make([]byte, 8)
-	if _, err := f.vhdReader.ReadBytes(f.footerOffset+0, cookieData); err != nil {
+	if _, err := f.vhdReader.ReadBytesAt(f.footerOffset+0, cookieData); err != nil {
 		return nil, NewParseError("Cookie", err)
 	}
 
@@ -139,7 +139,7 @@ func (f *Factory) readVhdCookie() (*vhdcore.Cookie, error) {
 // Feature is stored as 4 bytes value starting at offset 8 relative to the beginning of
 // footer.
 func (f *Factory) readFeatures() (VhdFeature, error) {
-	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 8)
+	value, err := f.vhdReader.ReadUInt32At(f.footerOffset + 8)
 	if err != nil {
 		return VhdFeatureNoFeaturesEnabled, NewParseError("Features", err)
 	}
@@ -151,7 +151,7 @@ func (f *Factory) readFeatures() (VhdFeature, error) {
 // VhdFileFormatVersion is stored as 4 bytes value starting at offset 12 relative to the
 // beginning of footer.
 func (f *Factory) readFileFormatVersion() (VhdFileFormatVersion, error) {
-	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 12)
+	value, err := f.vhdReader.ReadUInt32At(f.footerOffset + 12)
 	if err != nil {
 		return VhdFileFormatVersionNone, NewParseError("FileFormatVersion", err)
 	}
@@ -163,7 +163,7 @@ func (f *Factory) readFileFormatVersion() (VhdFileFormatVersion, error) {
 // Header offset is stored as 8 bytes value starting at offset 16 relative to the beginning
 // of footer. This value is stored in big-endian format.
 func (f *Factory) readHeaderOffset() (int64, error) {
-	value, err := f.vhdReader.ReadInt64(f.footerOffset + 16)
+	value, err := f.vhdReader.ReadInt64At(f.footerOffset + 16)
 	if err != nil {
 		return -1, NewParseError("HeaderOffset", err)
 	}
@@ -176,7 +176,7 @@ func (f *Factory) readHeaderOffset() (int64, error) {
 // TimeStamp is stored as 4 bytes value starting at offset 24 relative to the beginning
 // of footer. This value is stored in big-endian format.
 func (f *Factory) readTimeStamp() (*time.Time, error) {
-	value, err := f.vhdReader.ReadDateTime(f.footerOffset + 24)
+	value, err := f.vhdReader.ReadDateTimeAt(f.footerOffset + 24)
 	if err != nil {
 		return nil, NewParseError("TimeStamp", err)
 	}
@@ -190,7 +190,7 @@ func (f *Factory) readTimeStamp() (*time.Time, error) {
 // of footer.
 func (f *Factory) readCreatorApplication() (string, error) {
 	creatorApp := make([]byte, 4)
-	_, err := f.vhdReader.ReadBytes(f.footerOffset+28, creatorApp)
+	_, err := f.vhdReader.ReadBytesAt(f.footerOffset+28, creatorApp)
 	if err != nil {
 		return "", NewParseError("CreatorApplication", err)
 	}
@@ -203,7 +203,7 @@ func (f *Factory) readCreatorApplication() (string, error) {
 // Version is stored as 4 bytes value starting at offset 32 relative to the beginning
 // of footer.
 func (f *Factory) readCreatorVersion() (VhdCreatorVersion, error) {
-	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 32)
+	value, err := f.vhdReader.ReadUInt32At(f.footerOffset + 32)
 	if err != nil {
 		return VhdCreatorVersionNone, NewParseError("CreatorVersion", err)
 	}
@@ -216,7 +216,7 @@ func (f *Factory) readCreatorVersion() (VhdCreatorVersion, error) {
 // Version is stored as 4 bytes value starting at offset 36 relative to the beginning
 // of footer.
 func (f *Factory) readCreatorHostOsType() (HostOsType, error) {
-	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 36)
+	value, err := f.vhdReader.ReadUInt32At(f.footerOffset + 36)
 	if err != nil {
 		return HostOsTypeNone, NewParseError("CreatorHostOsType", err)
 	}
@@ -231,7 +231,7 @@ func (f *Factory) readCreatorHostOsType() (HostOsType, error) {
 // header, footer BAT, block's bitmap
 // This value is stored in big-endian format.
 func (f *Factory) readPhysicalSize() (int64, error) {
-	value, err := f.vhdReader.ReadInt64(f.footerOffset + 40)
+	value, err := f.vhdReader.ReadInt64At(f.footerOffset + 40)
 	if err != nil {
 		return -1, NewParseError("PhysicalSize", err)
 	}
@@ -247,7 +247,7 @@ func (f *Factory) readPhysicalSize() (int64, error) {
 // header, footer BAT, block's bitmap
 // This value is stored in big-endian format.
 func (f *Factory) readVirtualSize() (int64, error) {
-	value, err := f.vhdReader.ReadInt64(f.footerOffset + 48)
+	value, err := f.vhdReader.ReadInt64At(f.footerOffset + 48)
 	if err != nil {
 		return -1, NewParseError("VirtualSize", err)
 	}
@@ -260,17 +260,17 @@ func (f *Factory) readVirtualSize() (int64, error) {
 // footer. This value is stored in big-endian format.
 func (f *Factory) readDiskGeometry() (*DiskGeometry, error) {
 	diskGeometry := &DiskGeometry{}
-	cylinder, err := f.vhdReader.ReadUInt16(f.footerOffset + 56 + 0)
+	cylinder, err := f.vhdReader.ReadUInt16At(f.footerOffset + 56 + 0)
 	if err != nil {
 		return nil, NewParseError("DiskGeometry::Cylinder", err)
 	}
 	diskGeometry.Cylinder = cylinder
-	heads, err := f.vhdReader.ReadByte(f.footerOffset + 56 + 2)
+	heads, err := f.vhdReader.ReadByteAt(f.footerOffset + 56 + 2)
 	if err != nil {
 		return nil, NewParseError("DiskGeometry::Heads", err)
 	}
 	diskGeometry.Heads = heads
-	sectors, err := f.vhdReader.ReadByte(f.footerOffset + 56 + 3)
+	sectors, err := f.vhdReader.ReadByteAt(f.footerOffset + 56 + 3)
 	if err != nil {
 		return nil, NewParseError("DiskGeometry::Sectors", err)
 	}
@@ -283,7 +283,7 @@ func (f *Factory) readDiskGeometry() (*DiskGeometry, error) {
 // The value is stored as 4 byte value starting at offset 60 relative to the beginning
 // of footer. This value is stored in big-endian format.
 func (f *Factory) readDiskType() (DiskType, error) {
-	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 60)
+	value, err := f.vhdReader.ReadUInt32At(f.footerOffset + 60)
 	if err != nil {
 		return DiskTypeNone, NewParseError("DiskType", err)
 	}
@@ -295,7 +295,7 @@ func (f *Factory) readDiskType() (DiskType, error) {
 // The value is stored as 4 byte value starting at offset 64 relative to the beginning
 // of footer. This value is stored in big-endian format.
 func (f *Factory) readCheckSum() (uint32, error) {
-	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 64)
+	value, err := f.vhdReader.ReadUInt32At(f.footerOffset + 64)
 	if err != nil {
 		return 0, NewParseError("CheckSum", err)
 	}
@@ -308,7 +308,7 @@ func (f *Factory) readCheckSum() (uint32, error) {
 // The value is stored as 16 byte value starting at offset 68 relative to the beginning
 // of footer.
 func (f *Factory) readUniqueID() (*common.UUID, error) {
-	value, err := f.vhdReader.ReadUUID(f.footerOffset + 68)
+	value, err := f.vhdReader.ReadUUIDAt(f.footerOffset + 68)
 	if err != nil {
 		return nil, NewParseError("UniqueId", err)
 	}
@@ -320,7 +320,7 @@ func (f *Factory) readUniqueID() (*common.UUID, error) {
 // The value is stored as 1 byte value starting at offset 84 relative to the beginning
 // of footer.
 func (f *Factory) readSavedState() (bool, error) {
-	value, err := f.vhdReader.ReadBoolean(f.footerOffset + 84)
+	value, err := f.vhdReader.ReadBooleanAt(f.footerOffset + 84)
 	if err != nil {
 		return false, NewParseError("SavedState", err)
 	}
@@ -333,7 +333,7 @@ func (f *Factory) readSavedState() (bool, error) {
 // of footer.
 func (f *Factory) readReserved() ([]byte, error) {
 	reserved := make([]byte, 427)
-	_, err := f.vhdReader.ReadBytes(f.footerOffset+85, reserved)
+	_, err := f.vhdReader.ReadBytesAt(f.footerOffset+85, reserved)
 	if err != nil {
 		return nil, NewParseError("Reserved", err)
 	}
@@ -344,7 +344,7 @@ func (f *Factory) readReserved() ([]byte, error) {
 // error if the byte could be read.
 func (f *Factory) readWholeFooter() ([]byte, error) {
 	rawData := make([]byte, 512)
-	_, err := f.vhdReader.ReadBytes(f.footerOffset+0, rawData)
+	_, err := f.vhdReader.ReadBytesAt(f.footerOffset+0, rawData)
 	if err != nil {
 		return nil, err
 	}
