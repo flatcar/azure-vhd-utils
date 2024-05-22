@@ -12,7 +12,6 @@ import (
 )
 
 // DataWithRange type describes a range and data associated with the range.
-//
 type DataWithRange struct {
 	Range *common.IndexRange
 	Data  []byte
@@ -22,7 +21,6 @@ type DataWithRange struct {
 // ranges and update the uploadableRanges slice by removing the empty ranges. This method returns the updated ranges.
 // The empty range detection required only for Fixed disk, if the stream is a expandable disk stream this method simply
 // returns the parameter uploadableRanges as it is.
-//
 func DetectEmptyRanges(diskStream *diskstream.DiskStream, uploadableRanges []*common.IndexRange) ([]*common.IndexRange, error) {
 	if diskStream.GetDiskType() != footer.DiskTypeFixed {
 		return uploadableRanges, nil
@@ -68,7 +66,6 @@ L:
 // to report the non-empty range indices and error channel - used to report any error while performing empty detection.
 // int channel will be closed on a successful completion, the caller must not expect any more value in the
 // int channel if the error channel is signaled.
-//
 func LocateNonEmptyRangeIndices(stream *diskstream.DiskStream, ranges []*common.IndexRange) (<-chan int32, <-chan error) {
 	indexChan := make(chan int32, 0)
 	errorChan := make(chan error, 0)
@@ -101,7 +98,6 @@ func LocateNonEmptyRangeIndices(stream *diskstream.DiskStream, ranges []*common.
 }
 
 // isAllZero returns true if the given byte slice contain all zeros
-//
 func isAllZero(buf []byte) bool {
 	l := len(buf)
 	j := 0

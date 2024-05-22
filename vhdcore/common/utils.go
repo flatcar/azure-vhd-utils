@@ -8,14 +8,12 @@ import (
 
 // Utf16BytesToStringLE decode the given UTF16 encoded byte sequence and returns
 // Go UTF8 encoded string, the byte order of the given sequence is little-endian.
-//
 func Utf16BytesToStringLE(b []byte) string {
 	return Utf16BytesToString(b, binary.LittleEndian)
 }
 
 // Utf16BytesToStringBE decode the given UTF16 encoded byte sequence and returns
 // Go UTF8 encoded string, the byte order of the given sequence is big-endian.
-//
 func Utf16BytesToStringBE(b []byte) string {
 	return Utf16BytesToString(b, binary.BigEndian)
 }
@@ -23,7 +21,6 @@ func Utf16BytesToStringBE(b []byte) string {
 // Utf16BytesToString decode the given UTF16 encoded byte sequence and returns
 // Go UTF8 encoded string, the byte order of the sequence is determined by the
 // given binary.ByteOrder parameter.
-//
 func Utf16BytesToString(b []byte, o binary.ByteOrder) string {
 	var u []uint16
 	l := len(b)
@@ -42,7 +39,6 @@ func Utf16BytesToString(b []byte, o binary.ByteOrder) string {
 }
 
 // CreateByteSliceCopy creates and returns a copy of the given slice.
-//
 func CreateByteSliceCopy(b []byte) []byte {
 	r := make([]byte, len(b))
 	copy(r, b)

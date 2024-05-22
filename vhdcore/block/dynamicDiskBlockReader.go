@@ -11,7 +11,6 @@ import (
 // DynamicDiskBlockReader type satisfies BlockDataReader interface,
 // implementation of BlockDataReader::Read by this type can read the 'data' section
 // of a dynamic disk's block.
-//
 type DynamicDiskBlockReader struct {
 	vhdReader            *reader.VhdReader
 	blockAllocationTable *bat.BlockAllocationTable
@@ -24,7 +23,6 @@ type DynamicDiskBlockReader struct {
 // The parameter vhdReader is the reader to read the disk
 // The parameter blockAllocationTable represents the disk's BAT
 // The parameter blockSizeInBytes is the size of the dynamic disk block
-//
 func NewDynamicDiskBlockReader(vhdReader *reader.VhdReader, blockAllocationTable *bat.BlockAllocationTable, blockSizeInBytes uint32) *DynamicDiskBlockReader {
 
 	return &DynamicDiskBlockReader{
@@ -37,7 +35,6 @@ func NewDynamicDiskBlockReader(vhdReader *reader.VhdReader, blockAllocationTable
 
 // Read reads the data in a block of a dynamic disk
 // The parameter block represents the block whose 'data' section to read
-//
 func (r *DynamicDiskBlockReader) Read(block *Block) ([]byte, error) {
 	blockIndex := block.BlockIndex
 	if !r.blockAllocationTable.HasData(blockIndex) {

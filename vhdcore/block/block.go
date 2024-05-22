@@ -11,7 +11,6 @@ import (
 // Block type represents Block of a vhd. A block of a dynamic or differential vhd starts with a
 // 'bitmap' section followed by the 'data' section, in case of fixed vhd the entire block is used
 // to store the 'data'.
-//
 type Block struct {
 	// BlockIndex is the index of the block, block indices are consecutive values starting from 0
 	// for the first block.
@@ -46,7 +45,6 @@ type Block struct {
 
 // Data returns the block data, the content of entire block in case of fixed vhd and the content
 // of block's data section in case of dynamic and differential vhd.
-//
 func (b *Block) Data() ([]byte, error) {
 	if b.blockData == nil {
 		var err error
@@ -60,20 +58,17 @@ func (b *Block) Data() ([]byte, error) {
 
 // GetSector returns an instance of Sector representing a sector with the given Id in this block.
 // The parameter sectorIndex is the index of the sector in this block to read.
-//
 func (b *Block) GetSector(sectorIndex uint32) (*Sector, error) {
 	return b.blockFactory.GetSector(b, sectorIndex)
 }
 
 // GetSectorCount returns the number of sectors in the block.
-//
 func (b *Block) GetSectorCount() int64 {
 	return b.LogicalRange.Length() / vhdcore.VhdSectorLength
 }
 
 // String returns formatted representation of the block
 // This satisfies Stringer interface.
-//
 func (b *Block) String() string {
 	return fmt.Sprintf("Block:%d", b.BlockIndex)
 }

@@ -17,18 +17,15 @@ import (
 )
 
 // The key of the page blob metadata collection entry holding VHD metadata as json.
-//
 const metaDataKey = "diskmetadata"
 
 // MetaData is the type representing metadata associated with an Azure page blob holding the VHD.
 // This will be stored as a JSON string in the page blob metadata collection with key 'diskmetadata'.
-//
 type MetaData struct {
 	FileMetaData *FileMetaData `json:"fileMetaData"`
 }
 
 // FileMetaData represents the metadata of a VHD file.
-//
 type FileMetaData struct {
 	FileName         string    `json:"fileName"`
 	FileSize         int64     `json:"fileSize"`
@@ -38,7 +35,6 @@ type FileMetaData struct {
 }
 
 // ToJSON returns MetaData as a json string.
-//
 func (m *MetaData) ToJSON() (string, error) {
 	b, err := json.Marshal(m)
 	if err != nil {
@@ -48,7 +44,6 @@ func (m *MetaData) ToJSON() (string, error) {
 }
 
 // ToMap returns the map representation of the MetaData which can be stored in the page blob metadata colleciton
-//
 func (m *MetaData) ToMap() (map[string]string, error) {
 	v, err := m.ToJSON()
 	if err != nil {
@@ -60,7 +55,6 @@ func (m *MetaData) ToMap() (map[string]string, error) {
 
 // NewMetaDataFromLocalVHD creates a MetaData instance that should be associated with the page blob
 // holding the VHD. The parameter vhdPath is the path to the local VHD.
-//
 func NewMetaDataFromLocalVHD(vhdPath string) (*MetaData, error) {
 	fileStat, err := getFileStat(vhdPath)
 	if err != nil {
@@ -91,7 +85,6 @@ func NewMetaDataFromLocalVHD(vhdPath string) (*MetaData, error) {
 
 // NewMetadataFromBlob returns MetaData instance associated with a Azure page blob, if there is no
 // MetaData associated with the blob it returns nil value for MetaData
-//
 func NewMetadataFromBlob(blobClient storage.BlobStorageClient, containerName, blobName string) (*MetaData, error) {
 	allMetadata, err := blobClient.GetBlobMetadata(containerName, blobName)
 	if err != nil {
@@ -113,7 +106,6 @@ func NewMetadataFromBlob(blobClient storage.BlobStorageClient, containerName, bl
 // CompareMetaData compares the MetaData associated with the remote page blob and local VHD file. If both metadata
 // are same this method returns an empty error slice else a non-empty error slice with each error describing
 // the metadata entry that mismatched.
-//
 func CompareMetaData(remote, local *MetaData) []error {
 	var metadataErrors = make([]error, 0)
 	if !bytes.Equal(remote.FileMetaData.MD5Hash, local.FileMetaData.MD5Hash) {
@@ -151,7 +143,6 @@ func CompareMetaData(remote, local *MetaData) []error {
 }
 
 // getFileStat returns os.FileInfo of a file.
-//
 func getFileStat(filePath string) (os.FileInfo, error) {
 	fd, err := os.Open(filePath)
 	if err != nil {
@@ -163,7 +154,6 @@ func getFileStat(filePath string) (os.FileInfo, error) {
 
 // calculateMD5Hash compute the MD5 checksum of a disk stream, it writes the compute progress in stdout
 // If there is an error in reading file, then the MD5 compute will stop and it return error.
-//
 func calculateMD5Hash(diskStream *diskstream.DiskStream) ([]byte, error) {
 	progressStream := progress.NewReaderWithProgress(diskStream, diskStream.GetSize(), 1*time.Second)
 	defer progressStream.Close()

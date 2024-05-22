@@ -6,7 +6,6 @@ import (
 )
 
 // Balancer is a type that can balance load among a set of workers
-//
 type Balancer struct {
 	errorChan              chan error   // The channel used by all workers to report error
 	requestHandledChan     chan *Worker // The channel used by a worker to signal balancer that a work has been executed
@@ -18,11 +17,9 @@ type Balancer struct {
 }
 
 // The size of work channel associated with each worker this balancer manages.
-//
 const workerQueueSize int = 3
 
 // NewBalancer creates a new instance of Balancer that needs to balance load between 'workerCount' workers
-//
 func NewBalancer(workerCount int) *Balancer {
 	balancer := &Balancer{
 		workerCount: workerCount,
@@ -34,7 +31,6 @@ func NewBalancer(workerCount int) *Balancer {
 }
 
 // Init initializes all channels and start the workers.
-//
 func (b *Balancer) Init() {
 	b.errorChan = make(chan error, 0)
 	b.requestHandledChan = make(chan *Worker, 0)
@@ -49,7 +45,6 @@ func (b *Balancer) Init() {
 
 // TearDownWorkers sends a force quit signal to all workers, which case worker to quit as soon as possible,
 // workers won't drain it's request channel in this case.
-//
 func (b *Balancer) TearDownWorkers() {
 	close(b.tearDownChan)
 }
@@ -58,7 +53,6 @@ func (b *Balancer) TearDownWorkers() {
 // with least load. This method returns two channels, a channel to communicate error from any worker back to
 // the consumer of balancer and second channel is used by the balancer to signal consumer that all workers has
 // been finished executing.
-//
 func (b *Balancer) Run(requestChan <-chan *Request) (<-chan error, <-chan bool) {
 	// Request dispatcher
 	go func() {
@@ -95,7 +89,6 @@ func (b *Balancer) Run(requestChan <-chan *Request) (<-chan error, <-chan bool) 
 // closeWorkersRequestChannel closes the Request channel of all workers, this indicates that no
 // more work will not be send the channel so that the workers can gracefully exit after handling
 // any pending work in the channel.
-//
 func (b *Balancer) closeWorkersRequestChannel() {
 	for i := 0; i < b.workerCount; i++ {
 		close((b.pool.Workers[i]).RequestsToHandleChan)
@@ -105,7 +98,6 @@ func (b *Balancer) closeWorkersRequestChannel() {
 // dispatch dispatches the request to the worker with least load. If all workers are completely
 // busy (i.e. there Pending request count is currently equal to the maximum load) then this
 // method will poll until one worker is available.
-//
 func (b *Balancer) dispatch(request *Request) {
 	for {
 		if b.pool.Workers[0].Pending >= workerQueueSize {
@@ -125,7 +117,6 @@ func (b *Balancer) dispatch(request *Request) {
 
 // completed is called when a worker finishes one work, it updates the load status of the given the
 // worker.
-//
 func (b *Balancer) completed(worker *Worker) {
 	b.pool.Lock()
 	worker.Pending--
@@ -136,7 +127,6 @@ func (b *Balancer) completed(worker *Worker) {
 // WorkersCurrentLoad returns the load of the workers this balancer manages as comma separated string
 // values where each value consists of worker id (Worker.Id property) and pending requests associated
 // with the worker.
-//
 func (b *Balancer) WorkersCurrentLoad() string {
 	return b.pool.WorkersCurrentLoad()
 }

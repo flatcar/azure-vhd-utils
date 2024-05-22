@@ -6,13 +6,11 @@ import (
 )
 
 // UUID represents a Universally Unique Identifier.
-//
 type UUID struct {
 	uuid [16]byte
 }
 
 // NewUUID creates a new UUID, it uses the given 128-bit (16 byte) value as the uuid.
-//
 func NewUUID(b []byte) (*UUID, error) {
 	if len(b) != 16 {
 		return nil, errors.New("NewUUID: buffer requires to be 16 bytes")
@@ -25,7 +23,6 @@ func NewUUID(b []byte) (*UUID, error) {
 
 // String returns the string representation of the UUID which is 16 hex digits separated by hyphens
 // int form xxxx-xx-xx-xx-xxxxxx
-//
 func (u *UUID) String() string {
 	a := uint32(u.uuid[3])<<24 | uint32(u.uuid[2])<<16 | uint32(u.uuid[1])<<8 | uint32(u.uuid[0])
 	// a := b.order.Uint32(b.buffer[:4])
@@ -45,7 +42,6 @@ func (u *UUID) String() string {
 }
 
 // ToByteSlice returns the UUID as byte slice.
-//
 func (u *UUID) ToByteSlice() []byte {
 	b := make([]byte, 16)
 	copy(b, u.uuid[:])

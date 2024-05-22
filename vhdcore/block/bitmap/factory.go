@@ -6,7 +6,6 @@ import (
 )
 
 // Factory type is used to create BitMap instance by reading 'bitmap section' of a block.
-//
 type Factory struct {
 	vhdReader            *reader.VhdReader
 	blockAllocationTable *bat.BlockAllocationTable
@@ -16,7 +15,6 @@ type Factory struct {
 // the 'bitmap section' of a block. vhdReader is the reader to read the disk, blockAllocationTable wraps
 // the disk's BAT table, which has one entry per block, this is used to retrieve the absolute offset to
 // the beginning of the 'bitmap section' of a block and the size of the 'bitmap section'.
-//
 func NewFactory(vhdReader *reader.VhdReader, blockAllocationTable *bat.BlockAllocationTable) *Factory {
 	return &Factory{vhdReader: vhdReader, blockAllocationTable: blockAllocationTable}
 }
@@ -24,7 +22,6 @@ func NewFactory(vhdReader *reader.VhdReader, blockAllocationTable *bat.BlockAllo
 // Create creates a BitMap instance by reading block's 'bitmap section', block is the index of the
 // block entry in the BAT whose 'bitmap section' needs to be read.
 // This function return error if any error occurs while reading or parsing the block's bitmap.
-//
 func (f *Factory) Create(blockIndex uint32) (*BitMap, error) {
 	bitmapAbsoluteByteOffset := f.blockAllocationTable.GetBitmapAddress(blockIndex)
 	bitmapSizeInBytes := f.blockAllocationTable.GetBitmapSizeInBytes()

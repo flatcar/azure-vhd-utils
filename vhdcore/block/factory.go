@@ -6,7 +6,6 @@ import (
 
 // Factory interface that all block factories specific to disk type (fixed,
 // dynamic, differencing) needs to satisfy.
-//
 type Factory interface {
 	GetBlockCount() int64
 	GetBlockSize() int64

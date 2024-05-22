@@ -14,7 +14,6 @@ import (
 // replicated at the beginning of the disk as well, the header structure follows
 // this replicated footer, the field 'HeaderOffset' in the footer contains absolute
 // offset to the header structure.
-//
 type Header struct {
 	// Offset =  0, Size = 8
 	Cookie *vhdcore.Cookie

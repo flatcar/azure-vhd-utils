@@ -9,7 +9,6 @@ import (
 // ParentLocator represents an entry in Parent locator table. Each entry represents
 // details (parent-hard-disk-locator-info) of file locator which is used to locate
 // the parent disk file of differencing hard disk.
-//
 type ParentLocator struct {
 	// Offset = 0, Size = 4
 	// This field stores the code representing the platform-specific format used for
@@ -43,7 +42,6 @@ type ParentLocator struct {
 
 // SetPlatformSpecificFileLocator retrieves the file locator value and store that in the property
 // PlatformSpecificFileLocator
-//
 func (l *ParentLocator) SetPlatformSpecificFileLocator(fileLocator []byte) {
 	// 1. For the platform codes - W2Ru and W2Ku, fileLocator contents is UTF-16 encoded.
 	// 2. For the platform code  - MacX,          fileLocator contents is UTF-8 encoded.

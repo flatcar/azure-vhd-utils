@@ -10,7 +10,6 @@ import (
 )
 
 // Factory type is used to create Footer instance by reading vhd footer section.
-//
 type Factory struct {
 	vhdReader    *reader.VhdReader
 	footerOffset int64
@@ -18,14 +17,12 @@ type Factory struct {
 
 // NewFactory creates a new instance of Factory, which can be used to create a Footer
 // instance by reading the footer section using VhdReader.
-//
 func NewFactory(vhdReader *reader.VhdReader) *Factory {
 	return &Factory{vhdReader: vhdReader, footerOffset: vhdReader.Size - vhdcore.VhdFooterSize}
 }
 
 // Create creates a Footer instance by reading the footer section of the disk.
 // This function return error if any error occurs while reading or parsing the footer fields.
-//
 func (f *Factory) Create() (*Footer, error) {
 	footer := &Footer{}
 	var err error
@@ -124,7 +121,6 @@ func (f *Factory) Create() (*Footer, error) {
 // This function returns error if the cookie is invalid, if no or fewer bytes could be
 // read. Cookie is stored as eight-character ASCII string starting at offset 0 relative
 // to the beginning of footer.
-//
 func (f *Factory) readVhdCookie() (*vhdcore.Cookie, error) {
 	cookieData := make([]byte, 8)
 	if _, err := f.vhdReader.ReadBytes(f.footerOffset+0, cookieData); err != nil {
@@ -142,7 +138,6 @@ func (f *Factory) readVhdCookie() (*vhdcore.Cookie, error) {
 // fewer bytes could be read.
 // Feature is stored as 4 bytes value starting at offset 8 relative to the beginning of
 // footer.
-//
 func (f *Factory) readFeatures() (VhdFeature, error) {
 	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 8)
 	if err != nil {
@@ -155,7 +150,6 @@ func (f *Factory) readFeatures() (VhdFeature, error) {
 // This function is return error if no or fewer bytes could be read.
 // VhdFileFormatVersion is stored as 4 bytes value starting at offset 12 relative to the
 // beginning of footer.
-//
 func (f *Factory) readFileFormatVersion() (VhdFileFormatVersion, error) {
 	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 12)
 	if err != nil {
@@ -168,7 +162,6 @@ func (f *Factory) readFileFormatVersion() (VhdFileFormatVersion, error) {
 // This function return error if no or fewer bytes could be read.
 // Header offset is stored as 8 bytes value starting at offset 16 relative to the beginning
 // of footer. This value is stored in big-endian format.
-//
 func (f *Factory) readHeaderOffset() (int64, error) {
 	value, err := f.vhdReader.ReadInt64(f.footerOffset + 16)
 	if err != nil {
@@ -182,7 +175,6 @@ func (f *Factory) readHeaderOffset() (int64, error) {
 // This function return error if no or fewer bytes could be read.
 // TimeStamp is stored as 4 bytes value starting at offset 24 relative to the beginning
 // of footer. This value is stored in big-endian format.
-//
 func (f *Factory) readTimeStamp() (*time.Time, error) {
 	value, err := f.vhdReader.ReadDateTime(f.footerOffset + 24)
 	if err != nil {
@@ -196,7 +188,6 @@ func (f *Factory) readTimeStamp() (*time.Time, error) {
 // character set. This function return error if no or fewer bytes could be read.
 // Identifier is stored as 4 bytes value starting at offset 28 relative to the beginning
 // of footer.
-//
 func (f *Factory) readCreatorApplication() (string, error) {
 	creatorApp := make([]byte, 4)
 	_, err := f.vhdReader.ReadBytes(f.footerOffset+28, creatorApp)
@@ -211,7 +202,6 @@ func (f *Factory) readCreatorApplication() (string, error) {
 // bytes could be read.
 // Version is stored as 4 bytes value starting at offset 32 relative to the beginning
 // of footer.
-//
 func (f *Factory) readCreatorVersion() (VhdCreatorVersion, error) {
 	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 32)
 	if err != nil {
@@ -225,7 +215,6 @@ func (f *Factory) readCreatorVersion() (VhdCreatorVersion, error) {
 // bytes could be read.
 // Version is stored as 4 bytes value starting at offset 36 relative to the beginning
 // of footer.
-//
 func (f *Factory) readCreatorHostOsType() (HostOsType, error) {
 	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 36)
 	if err != nil {
@@ -241,7 +230,6 @@ func (f *Factory) readCreatorHostOsType() (HostOsType, error) {
 // beginning of footer. This size does not include the size consumed by vhd metadata such as
 // header, footer BAT, block's bitmap
 // This value is stored in big-endian format.
-//
 func (f *Factory) readPhysicalSize() (int64, error) {
 	value, err := f.vhdReader.ReadInt64(f.footerOffset + 40)
 	if err != nil {
@@ -258,7 +246,6 @@ func (f *Factory) readPhysicalSize() (int64, error) {
 // beginning of footer. This size does not include the size consumed by vhd metadata such as
 // header, footer BAT, block's bitmap
 // This value is stored in big-endian format.
-//
 func (f *Factory) readVirtualSize() (int64, error) {
 	value, err := f.vhdReader.ReadInt64(f.footerOffset + 48)
 	if err != nil {
@@ -271,7 +258,6 @@ func (f *Factory) readVirtualSize() (int64, error) {
 // track value for the hard disk. This function return error if no or fewer bytes could
 // be read. The value is stored starting starting at offset 56 relative to the beginning of
 // footer. This value is stored in big-endian format.
-//
 func (f *Factory) readDiskGeometry() (*DiskGeometry, error) {
 	diskGeometry := &DiskGeometry{}
 	cylinder, err := f.vhdReader.ReadUInt16(f.footerOffset + 56 + 0)
@@ -296,7 +282,6 @@ func (f *Factory) readDiskGeometry() (*DiskGeometry, error) {
 // This function return error if no or fewer bytes could be read.
 // The value is stored as 4 byte value starting at offset 60 relative to the beginning
 // of footer. This value is stored in big-endian format.
-//
 func (f *Factory) readDiskType() (DiskType, error) {
 	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 60)
 	if err != nil {
@@ -309,7 +294,6 @@ func (f *Factory) readDiskType() (DiskType, error) {
 // This function return error if no or fewer bytes could be read.
 // The value is stored as 4 byte value starting at offset 64 relative to the beginning
 // of footer. This value is stored in big-endian format.
-//
 func (f *Factory) readCheckSum() (uint32, error) {
 	value, err := f.vhdReader.ReadUInt32(f.footerOffset + 64)
 	if err != nil {
@@ -323,7 +307,6 @@ func (f *Factory) readCheckSum() (uint32, error) {
 // This function return error if no or fewer bytes could be read.
 // The value is stored as 16 byte value starting at offset 68 relative to the beginning
 // of footer.
-//
 func (f *Factory) readUniqueID() (*common.UUID, error) {
 	value, err := f.vhdReader.ReadUUID(f.footerOffset + 68)
 	if err != nil {
@@ -336,7 +319,6 @@ func (f *Factory) readUniqueID() (*common.UUID, error) {
 // This function return error if the byte could be read.
 // The value is stored as 1 byte value starting at offset 84 relative to the beginning
 // of footer.
-//
 func (f *Factory) readSavedState() (bool, error) {
 	value, err := f.vhdReader.ReadBoolean(f.footerOffset + 84)
 	if err != nil {
@@ -349,7 +331,6 @@ func (f *Factory) readSavedState() (bool, error) {
 // This function return error if the byte could be read.
 // It is 427 bytes in size starting at offset 85 relative to the beginning
 // of footer.
-//
 func (f *Factory) readReserved() ([]byte, error) {
 	reserved := make([]byte, 427)
 	_, err := f.vhdReader.ReadBytes(f.footerOffset+85, reserved)
@@ -361,7 +342,6 @@ func (f *Factory) readReserved() ([]byte, error) {
 
 // readWholeFooter reads the entire footer as a raw bytes. This function return
 // error if the byte could be read.
-//
 func (f *Factory) readWholeFooter() ([]byte, error) {
 	rawData := make([]byte, 512)
 	_, err := f.vhdReader.ReadBytes(f.footerOffset+0, rawData)

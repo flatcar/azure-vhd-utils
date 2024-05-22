@@ -4,7 +4,6 @@ import "fmt"
 
 // HostOsType represents the host operating system a disk image is created on.
 // Value is stored in the footer in big-endian format.
-//
 type HostOsType uint32
 
 const (
@@ -19,7 +18,6 @@ const (
 // String returns the string representation of the HostOsType. If the int type
 // value does not match with the predefined OS types then this function convert
 // the int to string and return
-//
 func (h HostOsType) String() string {
 	switch h {
 	case HostOsTypeWindows:

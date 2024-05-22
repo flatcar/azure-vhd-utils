@@ -20,7 +20,6 @@ import (
 // the 'block bitmap section'. Each bit in the bitmap indicates the state of the corresponding sector
 // in 'data section', 1 indicates sector contains valid data, 0 indicates the sector have never been
 // modified.
-//
 type BlockAllocationTable struct {
 	BATEntriesCount uint32
 	BAT             []uint32
@@ -30,7 +29,6 @@ type BlockAllocationTable struct {
 // NewBlockAllocationTable creates an instance of BlockAllocationTable, BAT is the block allocation table,
 // each entry in this table is the absolute sector offset to a block, blockSize is the size of block's
 // 'data section' in bytes.
-//
 func NewBlockAllocationTable(blockSize uint32, bat []uint32) *BlockAllocationTable {
 	return &BlockAllocationTable{BATEntriesCount: uint32(len(bat)), blockSize: blockSize, BAT: bat}
 }
@@ -41,7 +39,6 @@ func NewBlockAllocationTable(blockSize uint32, bat []uint32) *BlockAllocationTab
 // required to store the bitmap.
 // As per vhd specification sectors per block must be power of two. The sector length is always 512 bytes.
 // This means the block size will be power of two as well e.g. 512 * 2^3, 512 * 2^4, 512 * 2^5 etc..
-//
 func (b *BlockAllocationTable) GetBitmapSizeInBytes() int32 {
 	return int32(b.blockSize / uint32(vhdcore.VhdSectorLength) / 8)
 }
@@ -58,20 +55,17 @@ func (b *BlockAllocationTable) GetSectorPaddedBitmapSizeInBytes() int32 {
 // GetBitmapAddress returns the address of the 'block bitmap section' of a given block. Address is the
 // absolute byte offset of the 'block bitmap section'. A block consists of 'block bitmap section' and
 // 'data section'
-//
 func (b *BlockAllocationTable) GetBitmapAddress(blockIndex uint32) int64 {
 	return int64(b.BAT[blockIndex]) * vhdcore.VhdSectorLength
 }
 
 // GetBlockDataAddress returns the address of the 'data section' of a given block. Address is the absolute
 // byte offset of the 'data section'. A block consists of 'block bitmap section' and 'data section'
-//
 func (b *BlockAllocationTable) GetBlockDataAddress(blockIndex uint32) int64 {
 	return b.GetBitmapAddress(blockIndex) + int64(b.GetSectorPaddedBitmapSizeInBytes())
 }
 
 // HasData returns true if the given block has not yet expanded hence contains no data.
-//
 func (b *BlockAllocationTable) HasData(blockIndex uint32) bool {
 	return blockIndex != vhdcore.VhdNoDataInt && b.BAT[blockIndex] != vhdcore.VhdNoDataInt
 }

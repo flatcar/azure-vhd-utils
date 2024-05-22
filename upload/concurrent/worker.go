@@ -3,7 +3,6 @@ package concurrent
 import "fmt"
 
 // Worker represents a type which can listen for work from a channel and run them
-//
 type Worker struct {
 	RequestsToHandleChan chan *Request  // The buffered channel of works this worker needs to handle
 	Pending              int            // The number of pending requests this worker needs to handle (i.e. worker load)
@@ -16,13 +15,11 @@ type Worker struct {
 }
 
 // The maximum number of times a work needs to be retried before reporting failure on errorChan.
-//
 const maxRetryCount int = 5
 
 // NewWorker creates a new instance of the worker with the given work channel size.
 // errorChan is the channel to report the failure in addressing a work request after all
 // retries, each time a work is completed (failure or success) doneChan will be signalled
-//
 func NewWorker(id int, workChannelSize int, pool *Pool, errorChan chan<- error, requestHandledChan chan<- *Worker, workerFinishedChan chan<- *Worker) *Worker {
 	return &Worker{
 		ID:                   id,
@@ -36,12 +33,11 @@ func NewWorker(id int, workChannelSize int, pool *Pool, errorChan chan<- error, 
 
 // Run starts a go-routine that read work from work-queue associated with the worker and executes one
 // at a time. The go-routine returns/exit once one of the following condition is met:
-//   1. The work-queue is closed and drained and there is no work to steal from peers worker's work-queue
-//   2. A signal is received in the tearDownChan channel parameter
+//  1. The work-queue is closed and drained and there is no work to steal from peers worker's work-queue
+//  2. A signal is received in the tearDownChan channel parameter
 //
 // After executing each work, this method sends report to Worker::requestHandledChan channel
 // If a work fails after maximum retry, this method sends report to Worker::errorChan channel
-//
 func (w *Worker) Run(tearDownChan <-chan bool) {
 	go func() {
 		defer func() {
@@ -105,7 +101,6 @@ func (w *Worker) Run(tearDownChan <-chan bool) {
 
 // tryStealWork will try to steal a work from peer worker if available. If all peer channels are
 // empty then return nil
-//
 func (w *Worker) tryStealWork() *Request {
 	for _, w1 := range w.pool.Workers {
 		request, ok := <-w1.RequestsToHandleChan

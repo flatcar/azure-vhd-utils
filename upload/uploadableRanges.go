@@ -13,7 +13,6 @@ import (
 //
 // Note that this method will not check whether ranges of a fixed disk contains zeros, hence inorder to filter out such
 // ranges from the uploadable ranges, caller must use LocateNonEmptyRangeIndices method.
-//
 func LocateUploadableRanges(stream *diskstream.DiskStream, rangesToSkip []*common.IndexRange, pageSizeInBytes int64) ([]*common.IndexRange, error) {
 	var err error
 	var diskRanges = make([]*common.IndexRange, 0)

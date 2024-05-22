@@ -3,7 +3,6 @@ package bitmap
 import "fmt"
 
 // BitMap type represents 'bitmap section' of a block.
-//
 type BitMap struct {
 	data   []byte
 	Length int32
@@ -11,14 +10,12 @@ type BitMap struct {
 
 // NewBitMapFromByteSlice creates a new BitMap, b is the byte slice that needs to be used as bitmap
 // source. The caller should not reuse this byte slice anymore.
-//
 func NewBitMapFromByteSlice(b []byte) *BitMap {
 	return &BitMap{data: b, Length: int32(len(b)) * 8}
 }
 
 // NewBitMapFromByteSliceCopy creates a new BitMap, b is the byte slice that needs to be used as bitmap
 // source. The caller can reuse the byte slice as this method creates a copy of it.
-//
 func NewBitMapFromByteSliceCopy(b []byte) *BitMap {
 	data := make([]byte, len(b))
 	copy(data, b)
@@ -26,7 +23,6 @@ func NewBitMapFromByteSliceCopy(b []byte) *BitMap {
 }
 
 // Set sets the bit at the given index. It returns error if idx < 0 or idx >= bitsCount.
-//
 func (b *BitMap) Set(idx int32, value bool) error {
 	if idx < 0 || idx >= b.Length {
 		return fmt.Errorf("The index %d is out of boundary", idx)
@@ -45,7 +41,6 @@ func (b *BitMap) Set(idx int32, value bool) error {
 }
 
 // Get returns the value of the bit at the given index. It returns error if idx < 0 or idx >= bitsCount.
-//
 func (b *BitMap) Get(idx int32) (bool, error) {
 	if idx < 0 || idx >= b.Length {
 		return false, fmt.Errorf("The index %d is out of boundary", idx)

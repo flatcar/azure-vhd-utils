@@ -8,11 +8,9 @@ import (
 )
 
 // oneTB is one TeraByte
-//
 const oneTB int64 = 1024 * 1024 * 1024 * 1024
 
 // ValidateVhd returns error if the vhdPath refer to invalid vhd.
-//
 func ValidateVhd(vhdPath string) error {
 	vFactory := &vhdfile.FileFactory{}
 	_, err := vFactory.Create(vhdPath)
@@ -24,7 +22,6 @@ func ValidateVhd(vhdPath string) error {
 
 // ValidateVhdSize returns error if size of the vhd referenced by vhdPath is more than
 // the maximum allowed size (1TB)
-//
 func ValidateVhdSize(vhdPath string) error {
 	stream, _ := diskstream.CreateNewDiskStream(vhdPath)
 	if stream.GetSize() > oneTB {

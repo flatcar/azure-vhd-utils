@@ -6,7 +6,6 @@ import (
 )
 
 // SerializeFooter returns the given VhdFooter instance as byte slice of length 512 bytes.
-//
 func SerializeFooter(footer *Footer) []byte {
 	buffer := make([]byte, vhdcore.VhdFooterSize)
 	writer := writer.NewVhdWriterFromByteSlice(buffer)

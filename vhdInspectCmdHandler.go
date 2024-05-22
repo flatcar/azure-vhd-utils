@@ -17,14 +17,12 @@ import (
 )
 
 // FixedDiskBlocksInfo type describes general block information of a fixed disk
-//
 type FixedDiskBlocksInfo struct {
 	BlockSize  int64
 	BlockCount int64
 }
 
 // ExpandableDiskBlocksInfo type describes general block information of a expandable disk
-//
 type ExpandableDiskBlocksInfo struct {
 	BlockDataSize         int64
 	BlockBitmapSize       int32

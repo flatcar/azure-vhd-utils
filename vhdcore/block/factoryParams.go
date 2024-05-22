@@ -9,7 +9,6 @@ import (
 
 // FactoryParams represents type of the parameter for different disk block
 // factories.
-//
 type FactoryParams struct {
 	VhdFooter            *footer.Footer
 	VhdHeader            *header.Header

@@ -5,7 +5,6 @@ import "fmt"
 // VhdCreatorVersion represents the major/minor version of the application that
 // created the hard disk image. The version is stored in the vhd footer in
 // big-endian format.
-//
 type VhdCreatorVersion uint32
 
 const (
@@ -22,7 +21,6 @@ const (
 // String returns the string representation of the VhdCreatorVersion. If the int
 // VhdCreatorVersion value does not match with the predefined CreatorVersions then
 // this function convert the int to string and return.
-//
 func (v VhdCreatorVersion) String() string {
 	switch v {
 	case VhdCreatorVersionVS2004:

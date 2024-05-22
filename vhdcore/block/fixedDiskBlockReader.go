@@ -10,7 +10,6 @@ import (
 // FixedDiskBlockReader type satisfies BlockDataReader interface,
 // implementation of BlockDataReader::Read by this type can read the data from a block
 // of a fixed disk.
-//
 type FixedDiskBlockReader struct {
 	vhdReader        *reader.VhdReader
 	blockSizeInBytes uint32
@@ -20,7 +19,6 @@ type FixedDiskBlockReader struct {
 // a fixed disk block.
 // The parameter vhdReader is the reader to read the disk
 // The parameter blockSizeInBytes is the size of the fixed disk block
-//
 func NewFixedDiskBlockReader(vhdReader *reader.VhdReader, blockSizeInBytes uint32) *FixedDiskBlockReader {
 	return &FixedDiskBlockReader{
 		vhdReader:        vhdReader,
@@ -30,7 +28,6 @@ func NewFixedDiskBlockReader(vhdReader *reader.VhdReader, blockSizeInBytes uint3
 
 // Read reads the data in a block of a fixed disk
 // The parameter block represents the block to read
-//
 func (r *FixedDiskBlockReader) Read(block *Block) ([]byte, error) {
 	blockIndex := block.BlockIndex
 	blockByteOffset := int64(blockIndex) * int64(r.blockSizeInBytes)

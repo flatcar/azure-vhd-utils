@@ -12,7 +12,6 @@ import (
 )
 
 // Factory type is used to create VhdHeader instance by reading vhd header section.
-//
 type Factory struct {
 	vhdReader    *reader.VhdReader
 	headerOffset int64
@@ -20,14 +19,12 @@ type Factory struct {
 
 // NewFactory creates a new instance of Factory, which can be used to create
 // a VhdHeader instance by reading the header section using vhdReader.
-//
 func NewFactory(vhdReader *reader.VhdReader, headerOffset int64) *Factory {
 	return &Factory{vhdReader: vhdReader, headerOffset: headerOffset}
 }
 
 // Create creates a Header instance by reading the header section of a expandable disk.
 // This function return error if any error occurs while reading or parsing the header fields.
-//
 func (f *Factory) Create() (*Header, error) {
 	header := &Header{}
 	var err error
@@ -107,7 +104,6 @@ func (f *Factory) Create() (*Header, error) {
 // This function return error if the cookie is invalid, if no or fewer bytes could be read.
 // Cookie is stored as eight-character ASCII string starting at offset 0 relative to the beginning
 // of header.
-//
 func (f *Factory) readHeaderCookie() (*vhdcore.Cookie, error) {
 	cookieData := make([]byte, 8)
 	if _, err := f.vhdReader.ReadBytes(f.headerOffset+0, cookieData); err != nil {
@@ -126,7 +122,6 @@ func (f *Factory) readHeaderCookie() (*vhdcore.Cookie, error) {
 // bytes could be read.
 // This value is stored as 8 bytes value starting at offset 8 relative to the beginning of header.
 // This value is stored in big-endian format.
-//
 func (f *Factory) readDataOffset() (int64, error) {
 	value, err := f.vhdReader.ReadInt64(f.headerOffset + 8)
 	if err != nil {
@@ -139,7 +134,6 @@ func (f *Factory) readDataOffset() (int64, error) {
 // disk. This function return error if no or fewer bytes could be read.
 // BATOffset is stored as 8 bytes value starting at offset 16 relative to the beginning of header.
 // This value is stored in big-endian format.
-//
 func (f *Factory) readBATOffset() (int64, error) {
 	value, err := f.vhdReader.ReadInt64(f.headerOffset + 16)
 	if err != nil {
@@ -151,7 +145,6 @@ func (f *Factory) readBATOffset() (int64, error) {
 // readHeaderVersion reads the value of the field the holds the major/minor version of the disk header.
 // This function return error if no or fewer bytes could be read. HeaderVersion is stored as 4 bytes
 // value starting at offset 24 relative to the beginning of header.
-//
 func (f *Factory) readHeaderVersion() (VhdHeaderVersion, error) {
 	value, err := f.vhdReader.ReadUInt32(f.headerOffset + 24)
 	if err != nil {
@@ -169,7 +162,6 @@ func (f *Factory) readHeaderVersion() (VhdHeaderVersion, error) {
 // error if no or fewer bytes could be read.
 // MaxTableEntries is stored as 4 bytes value starting at offset 28 relative to the beginning of
 // header. This value is stored in big-endian format.
-//
 func (f *Factory) readMaxBATEntries() (uint32, error) {
 	value, err := f.vhdReader.ReadUInt32(f.headerOffset + 28)
 	if err != nil {
@@ -182,7 +174,6 @@ func (f *Factory) readMaxBATEntries() (uint32, error) {
 // bitmap section'. This function return error if no or fewer bytes could be read.
 // BlockSize is stored as 4 bytes value starting at offset 32 relative to the beginning of header.
 // This value is stored in big-endian format.
-//
 func (f *Factory) readBlockSize() (uint32, error) {
 	value, err := f.vhdReader.ReadUInt32(f.headerOffset + 32)
 	if err != nil {
@@ -195,7 +186,6 @@ func (f *Factory) readBlockSize() (uint32, error) {
 // This function return error if no or fewer bytes could be read.
 // The value is stored as 4 byte value starting at offset 36 relative to the beginning of header.
 // This value is stored in big-endian format.
-//
 func (f *Factory) readCheckSum() (uint32, error) {
 	value, err := f.vhdReader.ReadUInt32(f.headerOffset + 36)
 	if err != nil {
@@ -208,7 +198,6 @@ func (f *Factory) readCheckSum() (uint32, error) {
 // field is used only for differencing disk.  This is a 128-bit universally unique identifier (UUID).
 // This function return error if no or fewer bytes could be read.
 // The value is stored as 16 byte value starting at offset 40 relative to the beginning of header.
-//
 func (f *Factory) readParentUniqueID() (*common.UUID, error) {
 	value, err := f.vhdReader.ReadUUID(f.headerOffset + 40)
 	if err != nil {
@@ -222,7 +211,6 @@ func (f *Factory) readParentUniqueID() (*common.UUID, error) {
 // instance of time.Time. This function return error if no or fewer bytes could be read.
 // TimeStamp is stored as 4 bytes value starting at offset 56 relative to the beginning of header.
 // This value is stored in big-endian format.
-//
 func (f *Factory) readParentTimeStamp() (*time.Time, error) {
 	value, err := f.vhdReader.ReadDateTime(f.headerOffset + 56)
 	if err != nil {
@@ -234,7 +222,6 @@ func (f *Factory) readParentTimeStamp() (*time.Time, error) {
 // readReserved reads the reserved field which is not used and all set to zero. This function return
 // error if no or fewer bytes could be read. Reserved is stored as 4 bytes value starting at offset
 // 60 relative to the beginning of header. This value is stored in big-endian format.
-//
 func (f *Factory) readReserved() (uint32, error) {
 	value, err := f.vhdReader.ReadUInt32(f.headerOffset + 60)
 	if err != nil {
@@ -246,7 +233,6 @@ func (f *Factory) readReserved() (uint32, error) {
 // readParentPath reads the field storing parent hard disk file name. This function return error if
 // no or fewer bytes could be read. ParentPath is stored in UTF-16 as big-endian format, its length is
 // 512 bytes, starting at offset 64 relative to the beginning of header.
-//
 func (f *Factory) readParentPath() (string, error) {
 	parentPath := make([]byte, 512)
 	_, err := f.vhdReader.ReadBytes(f.headerOffset+64, parentPath)
@@ -259,7 +245,6 @@ func (f *Factory) readParentPath() (string, error) {
 // readParentLocators reads the collection of parent locator entries. This function return error if
 // no or fewer bytes could be read. There are 8 entries, each 24 bytes, starting at offset 576 relative
 // to the beginning of header.
-//
 func (f *Factory) readParentLocators() (parentlocator.ParentLocators, error) {
 	var err error
 	count := 8
@@ -279,7 +264,6 @@ func (f *Factory) readParentLocators() (parentlocator.ParentLocators, error) {
 
 // readWholeHeader reads the entire header as a raw bytes. This function return error if the byte
 // could be read.
-//
 func (f *Factory) readWholeHeader() ([]byte, error) {
 	rawData := make([]byte, 1024)
 	_, err := f.vhdReader.ReadBytes(f.headerOffset+0, rawData)
