@@ -9,9 +9,13 @@ lint: azure-vhd-utils
 	go vet ./...
 	go mod tidy
 
-azure-vhd-utils: $(call rwildcard, ., *.go)
+azure-vhd-utils: $(call rwildcard, ., *.go) go.mod go.sum Makefile
 	go build
 
 .PHONY: test
 test:
 	go test ./...
+
+.PHONY: clean
+clean:
+	rm -f azure-vhd-utils
