@@ -10,8 +10,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/Azure/azure-sdk-for-go/storage"
-
 	"github.com/flatcar/azure-vhd-utils/upload/progress"
 	"github.com/flatcar/azure-vhd-utils/vhdcore/diskstream"
 )
@@ -43,14 +41,14 @@ func (m *Metadata) ToJSON() (string, error) {
 	return string(b), nil
 }
 
-// ToMap returns the map representation of the Metadata which can be stored in the page blob metadata colleciton
-func (m *Metadata) ToMap() (map[string]string, error) {
+// ToMap returns the map representation of the Metadata which can be stored in the page blob metadata collection.
+func (m *Metadata) ToMap() (map[string]*string, error) {
 	v, err := m.ToJSON()
 	if err != nil {
 		return nil, err
 	}
 
-	return map[string]string{metadataKey: v}, nil
+	return map[string]*string{metadataKey: &v}, nil
 }
 
 // NewMetadataFromLocalVHD creates a Metadata instance that should be associated with the page blob
@@ -83,24 +81,18 @@ func NewMetadataFromLocalVHD(vhdPath string) (*Metadata, error) {
 	}, nil
 }
 
-// NewMetadataFromBlob returns Metadata instance associated with a Azure page blob, if there is no
-// Metadata associated with the blob it returns nil value for Metadata
-func NewMetadataFromBlob(blobClient storage.BlobStorageClient, containerName, blobName string) (*Metadata, error) {
-	allMetadata, err := blobClient.GetBlobMetadata(containerName, blobName)
-	if err != nil {
-		return nil, fmt.Errorf("NewMetadataFromBlob, failed to fetch blob metadata: %v", err)
-	}
-	m, ok := allMetadata[metadataKey]
-	if !ok {
+// NewMetadataFromBlobMetadata returns Metadata instance associated with a Azure page blob, if there is no Metadata
+// associated with the blob it returns nil value for Metadata
+func NewMetadataFromBlobMetadata(blobmd map[string]*string) (*Metadata, error) {
+	m, ok := blobmd[metadataKey]
+	if !ok || m == nil {
 		return nil, nil
 	}
-
-	b := []byte(m)
-	metadata := Metadata{}
-	if err := json.Unmarshal(b, &metadata); err != nil {
-		return nil, fmt.Errorf("NewMetadataFromBlob, failed to deserialize blob metadata with key %s: %v", metadataKey, err)
+	metadata := new(Metadata)
+	if err := json.Unmarshal([]byte(*m), metadata); err != nil {
+		return nil, fmt.Errorf("NewMetadataFromBlobMetadata, failed to deserialize blob metadata with key %s: %v", metadataKey, err)
 	}
-	return &metadata, nil
+	return metadata, nil
 }
 
 // CompareMetadata compares the Metadata associated with the remote page blob and local VHD file. If both metadata
