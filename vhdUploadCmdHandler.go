@@ -123,24 +123,24 @@ func vhdUploadCmdHandler() cli.Command {
 			}
 
 			resume := false
-			var blobMetaData *metadata.MetaData
+			var blobMetadata *metadata.Metadata
 			if blobExists {
 				if !overwrite {
-					blobMetaData = getBlobMetaData(blobServiceClient, containerName, blobName)
+					blobMetadata = getBlobMetadata(blobServiceClient, containerName, blobName)
 					resume = true
 					log.Printf("Blob with name '%s' already exists, checking upload can be resumed\n", blobName)
 				}
 			}
 
-			localMetaData := getLocalVHDMetaData(localVHDPath)
+			localMetadata := getLocalVHDMetadata(localVHDPath)
 			var rangesToSkip []*common.IndexRange
 			if resume {
-				if errs := metadata.CompareMetaData(blobMetaData, localMetaData); len(errs) != 0 {
+				if errs := metadata.CompareMetadata(blobMetadata, localMetadata); len(errs) > 0 {
 					printErrorsAndFatal(errs)
 				}
 				rangesToSkip = getAlreadyUploadedBlobRanges(blobServiceClient, containerName, blobName)
 			} else {
-				createBlob(blobServiceClient, containerName, blobName, diskStream.GetSize(), localMetaData)
+				createBlob(blobServiceClient, containerName, blobName, diskStream.GetSize(), localMetadata)
 			}
 
 			uploadableRanges, err := upload.LocateUploadableRanges(diskStream, rangesToSkip, PageBlobPageSize, PageBlobPageSetSize)
@@ -162,7 +162,7 @@ func vhdUploadCmdHandler() cli.Command {
 				BlobName:              blobName,
 				Parallelism:           parallelism,
 				Resume:                resume,
-				MD5Hash:               localMetaData.FileMetaData.MD5Hash,
+				MD5Hash:               localMetadata.FileMetadata.MD5Hash,
 			}
 
 			err = upload.Upload(cxt)
@@ -170,7 +170,7 @@ func vhdUploadCmdHandler() cli.Command {
 				return err
 			}
 
-			setBlobMD5Hash(blobServiceClient, containerName, blobName, localMetaData)
+			setBlobMD5Hash(blobServiceClient, containerName, blobName, localMetadata)
 			fmt.Println("\nUpload completed")
 			return nil
 		},
@@ -197,56 +197,56 @@ func ensureVHDSanity(localVHDPath string) {
 	}
 }
 
-// getBlobMetaData returns the custom metadata associated with a page blob which is set by createBlob method.
+// getBlobMetadata returns the custom metadata associated with a page blob which is set by createBlob method.
 // The parameter client is the Azure blob service client, parameter containerName is the name of an existing container
 // in which the page blob resides, parameter blobName is name for the page blob
 // This method attempt to fetch the metadata only if MD5Hash is not set for the page blob, this method panic if the
 // MD5Hash is already set or if the custom metadata is absent.
-func getBlobMetaData(client storage.BlobStorageClient, containerName, blobName string) *metadata.MetaData {
+func getBlobMetadata(client storage.BlobStorageClient, containerName, blobName string) *metadata.Metadata {
 	md5Hash := getBlobMD5Hash(client, containerName, blobName)
 	if md5Hash != "" {
 		log.Fatalf("VHD exists in blob storage with name '%s'. If you want to upload again, use the --overwrite option.", blobName)
 	}
 
-	blobMetaData, err := metadata.NewMetadataFromBlob(client, containerName, blobName)
+	blobMetadata, err := metadata.NewMetadataFromBlob(client, containerName, blobName)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if blobMetaData == nil {
+	if blobMetadata == nil {
 		log.Fatalf("There is no upload metadata associated with the existing blob '%s', so upload operation cannot be resumed, use --overwrite option.", blobName)
 	}
-	return blobMetaData
+	return blobMetadata
 }
 
-// getLocalVHDMetaData returns the metadata of a local VHD
-func getLocalVHDMetaData(localVHDPath string) *metadata.MetaData {
-	localMetaData, err := metadata.NewMetaDataFromLocalVHD(localVHDPath)
+// getLocalVHDMetadata returns the metadata of a local VHD
+func getLocalVHDMetadata(localVHDPath string) *metadata.Metadata {
+	localMetadata, err := metadata.NewMetadataFromLocalVHD(localVHDPath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return localMetaData
+	return localMetadata
 }
 
 // createBlob creates a page blob of specific size and sets custom metadata
 // The parameter client is the Azure blob service client, parameter containerName is the name of an existing container
 // in which the page blob needs to be created, parameter blobName is name for the new page blob, size is the size of
-// the new page blob in bytes and parameter vhdMetaData is the custom metadata to be associacted with the page blob
-func createBlob(client storage.BlobStorageClient, containerName, blobName string, size int64, vhdMetaData *metadata.MetaData) {
+// the new page blob in bytes and parameter vhdMetadata is the custom metadata to be associacted with the page blob
+func createBlob(client storage.BlobStorageClient, containerName, blobName string, size int64, vhdMetadata *metadata.Metadata) {
 	if err := client.PutPageBlob(containerName, blobName, size, nil); err != nil {
 		log.Fatal(err)
 	}
-	m, _ := vhdMetaData.ToMap()
+	m, _ := vhdMetadata.ToMap()
 	if err := client.SetBlobMetadata(containerName, blobName, m, make(map[string]string)); err != nil {
 		log.Fatal(err)
 	}
 }
 
 // setBlobMD5Hash sets MD5 hash of the blob in it's properties
-func setBlobMD5Hash(client storage.BlobStorageClient, containerName, blobName string, vhdMetaData *metadata.MetaData) {
-	if vhdMetaData.FileMetaData.MD5Hash != nil {
+func setBlobMD5Hash(client storage.BlobStorageClient, containerName, blobName string, vhdMetadata *metadata.Metadata) {
+	if vhdMetadata.FileMetadata.MD5Hash != nil {
 		blobHeaders := storage.BlobHeaders{
-			ContentMD5: base64.StdEncoding.EncodeToString(vhdMetaData.FileMetaData.MD5Hash),
+			ContentMD5: base64.StdEncoding.EncodeToString(vhdMetadata.FileMetadata.MD5Hash),
 		}
 		if err := client.SetBlobProperties(containerName, blobName, blobHeaders); err != nil {
 			log.Fatal(err)
