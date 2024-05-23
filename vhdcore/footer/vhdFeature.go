@@ -4,7 +4,6 @@ import "fmt"
 
 // VhdFeature represents a bit field used to indicate specific feature support.
 // Value is stored in the footer in big-endian format.
-//
 type VhdFeature uint32
 
 const (
@@ -24,7 +23,6 @@ const (
 // String returns the string representation of the VhdFeature. If the int VhdFeature
 // value does not match with the predefined VhdFeatures then this function convert
 // int to string and return
-//
 func (v VhdFeature) String() string {
 	switch v {
 	case VhdFeatureNoFeaturesEnabled:

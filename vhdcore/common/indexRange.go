@@ -7,7 +7,6 @@ import (
 
 // IndexRange represents sequence of integral numbers in a specified range, where range starts
 // at Start and ends at End, inclusive
-//
 type IndexRange struct {
 	Start int64
 	End   int64
@@ -15,19 +14,16 @@ type IndexRange struct {
 
 // NewIndexRange creates a new range with start as value of the first integer in the sequence
 // and end as value of last integer in the sequence.
-//
 func NewIndexRange(start, end int64) *IndexRange {
 	return &IndexRange{Start: start, End: end}
 }
 
 // NewIndexRangeFromLength creates a new range starting from start and ends at start + length - 1.
-//
 func NewIndexRangeFromLength(start, length int64) *IndexRange {
 	return NewIndexRange(start, start+length-1)
 }
 
 // TotalRangeLength returns the total length of a given slice of ranges.
-//
 func TotalRangeLength(ranges []*IndexRange) int64 {
 	var length = int64(0)
 	for _, r := range ranges {
@@ -38,7 +34,6 @@ func TotalRangeLength(ranges []*IndexRange) int64 {
 
 // SubtractRanges produces a set of ranges, each subset of ranges in this set is produced by
 // subtracting subtrahends from each range in minuends.
-//
 func SubtractRanges(minuends, subtrahends []*IndexRange) []*IndexRange {
 	var result = make([]*IndexRange, 0)
 	for _, minuend := range minuends {
@@ -53,11 +48,10 @@ func SubtractRanges(minuends, subtrahends []*IndexRange) []*IndexRange {
 // Each each range in the given ranges X will be partitioned by the given partition-size to produce
 // a range set A. If the last range in A is not of partition-size and if it is adjacent to the
 // next range in the X then we calculate the bytes required to reach partition-size and
-//    1. if next range has more bytes than required, then we borrow the required bytes from next
-//       range and advances the next range start
-//    2. if next range has less or equal to the required bytes, then we borrow available and skip
-//       next range
-//
+//  1. if next range has more bytes than required, then we borrow the required bytes from next
+//     range and advances the next range start
+//  2. if next range has less or equal to the required bytes, then we borrow available and skip
+//     next range
 func ChunkRangesBySize(ranges []*IndexRange, chunkSizeInBytes int64) []*IndexRange {
 	var chunks = make([]*IndexRange, 0)
 	length := len(ranges)
@@ -105,14 +99,12 @@ func ChunkRangesBySize(ranges []*IndexRange, chunkSizeInBytes int64) []*IndexRan
 }
 
 // Length returns number of sequential integers in the range.
-//
 func (ir *IndexRange) Length() int64 {
 	return ir.End - ir.Start + 1
 }
 
 // Equals returns true if this and given range represents the same sequence, two sequences
 // are same if both have the same start and end.
-//
 func (ir *IndexRange) Equals(other *IndexRange) bool {
 	return other != nil && ir.Start == other.Start && ir.End == other.End
 }
@@ -120,16 +112,16 @@ func (ir *IndexRange) Equals(other *IndexRange) bool {
 // CompareTo indicates whether the this range precedes, follows, or occurs in the same
 // position in the sort order as the other
 // A return value
-//   Less than zero:    This range precedes the other in the sort order, range A precedes
-//                      range B if A start before B or both has the same start and A ends
-//                      before B.
-//   Zero:              This range occurs in the same position as other in sort order, two
-//                      ranges are in the same sort position if both has the same start
-//                      and end
-//   Greater than zero: This range follows the other in the sort order, a range A follows
-//                      range B, if A start after B or both has the same start and A ends
-//                      after B
 //
+//	Less than zero:    This range precedes the other in the sort order, range A precedes
+//	                   range B if A start before B or both has the same start and A ends
+//	                   before B.
+//	Zero:              This range occurs in the same position as other in sort order, two
+//	                   ranges are in the same sort position if both has the same start
+//	                   and end
+//	Greater than zero: This range follows the other in the sort order, a range A follows
+//	                   range B, if A start after B or both has the same start and A ends
+//	                   after B
 func (ir *IndexRange) CompareTo(other *IndexRange) int64 {
 	r := ir.Start - other.Start
 	if r != 0 {
@@ -141,7 +133,6 @@ func (ir *IndexRange) CompareTo(other *IndexRange) int64 {
 
 // Intersects checks this and other range intersects, two ranges A and B intersects if either
 // of them starts or ends within the range of other, inclusive.
-//
 func (ir *IndexRange) Intersects(other *IndexRange) bool {
 	start := ir.Start
 	if start < other.Start {
@@ -158,7 +149,6 @@ func (ir *IndexRange) Intersects(other *IndexRange) bool {
 
 // Intersection computes the range representing the intersection of two ranges, a return
 // value nil indicates the ranges does not intersects.
-//
 func (ir *IndexRange) Intersection(other *IndexRange) *IndexRange {
 	start := ir.Start
 	if start < other.Start {
@@ -180,7 +170,6 @@ func (ir *IndexRange) Intersection(other *IndexRange) *IndexRange {
 // Includes checks this range includes the other range, a range A includes range B if B starts
 // and ends within A, inclusive. In other words a range A includes range B if their intersection
 // produces B
-//
 func (ir *IndexRange) Includes(other *IndexRange) bool {
 	if other.Start < ir.Start {
 		return false
@@ -195,7 +184,6 @@ func (ir *IndexRange) Includes(other *IndexRange) bool {
 
 // Gap compute the range representing the gap between this and the other range, a return value
 // nil indicates there is no gap because either the ranges intersects or they are adjacent.
-//
 func (ir *IndexRange) Gap(other *IndexRange) *IndexRange {
 	if ir.Intersects(other) {
 		return nil
@@ -219,7 +207,6 @@ func (ir *IndexRange) Gap(other *IndexRange) *IndexRange {
 
 // Adjacent checks this range starts immediately starts after the other range or vice-versa,
 // a return value nil indicates the ranges intersects or there is a gap between the ranges.
-//
 func (ir *IndexRange) Adjacent(other *IndexRange) bool {
 	return !ir.Intersects(other) && ir.Gap(other) == nil
 }
@@ -228,18 +215,17 @@ func (ir *IndexRange) Adjacent(other *IndexRange) bool {
 // differences to result slice.
 //
 // Given two ranges A and B, A - B produces
-// 1. No result
-//      a. If they are equal or
-//      b. B includes A i.e 'A n B' = A
-//  OR
-// 2. A, if they don't intersects
-//  OR
-// 3. [(A n B).End + 1, A.End],     if A and 'A n B' has same start
-//  OR
-// 4. [A.Start, (A n B).Start - 1], if A and 'A n B' has same end
-//  OR
-// 5. { [A.Start, (A n B).Start - 1], [(A n B).End + 1, A.End] }, otherwise
-//
+//  1. No result
+//     a. If they are equal or
+//     b. B includes A i.e 'A n B' = A
+//     OR
+//  2. A, if they don't intersects
+//     OR
+//  3. [(A n B).End + 1, A.End],     if A and 'A n B' has same start
+//     OR
+//  4. [A.Start, (A n B).Start - 1], if A and 'A n B' has same end
+//     OR
+//  5. { [A.Start, (A n B).Start - 1], [(A n B).End + 1, A.End] }, otherwise
 func (ir *IndexRange) Subtract(other *IndexRange, result []*IndexRange) []*IndexRange {
 	if ir.Equals(other) {
 		return result
@@ -273,7 +259,6 @@ func (ir *IndexRange) Subtract(other *IndexRange, result []*IndexRange) []*Index
 // SubtractRanges subtracts a set of ranges from this range and appends the ranges representing
 // the differences to result slice. The result slice will be sorted and de-duped if sortandDedup
 // is true.
-//
 func (ir *IndexRange) SubtractRanges(ranges []*IndexRange, sortandDedup bool, result []*IndexRange) []*IndexRange {
 	intersectAny := false
 	for _, o := range ranges {
@@ -296,7 +281,6 @@ func (ir *IndexRange) SubtractRanges(ranges []*IndexRange, sortandDedup bool, re
 
 // Merge produces a range by merging this and other range if they are adjacent. Trying to merge
 // non-adjacent ranges are panic.
-//
 func (ir *IndexRange) Merge(other *IndexRange) *IndexRange {
 	if !ir.Adjacent(other) {
 		// TODO: error
@@ -312,7 +296,6 @@ func (ir *IndexRange) Merge(other *IndexRange) *IndexRange {
 // PartitionBy produces a slice of adjacent ranges of same size, first range in the slice starts
 // where this range starts and last range ends where this range ends. The length of last range will
 // be less than size if length of this range is not multiple of size.
-//
 func (ir *IndexRange) PartitionBy(size int64) []*IndexRange {
 	length := ir.Length()
 	if length <= size {
@@ -335,14 +318,12 @@ func (ir *IndexRange) PartitionBy(size int64) []*IndexRange {
 }
 
 // String returns the string representation of this range, this satisfies stringer interface.
-//
 func (ir *IndexRange) String() string {
 	return fmt.Sprintf("{%d, %d}", ir.Start, ir.End)
 }
 
 // sortAndDedup sorts the given range slice in place, remove the duplicates from the sorted slice
 // and returns the updated slice.
-//
 func sortAndDedup(indexRanges []*IndexRange) []*IndexRange {
 	if len(indexRanges) == 0 {
 		return indexRanges
@@ -360,24 +341,20 @@ func sortAndDedup(indexRanges []*IndexRange) []*IndexRange {
 
 // indexRangeSorter is a type that satisfies sort.Interface interface for supporting sorting of
 // a IndexRange collection.
-//
 type indexRangeSorter []*IndexRange
 
 // Len is the number of elements in the range collection.
-//
 func (s indexRangeSorter) Len() int {
 	return len(s)
 }
 
 // Less reports whether range at i-th position precedes the range at j-th position in sort order.
 // range A precedes range B if A start before B or both has the same start and A ends before B.
-//
 func (s indexRangeSorter) Less(i, j int) bool {
 	return s[i].CompareTo(s[j]) < 0
 }
 
 // Swap swaps the elements with indexes i and j.
-//
 func (s indexRangeSorter) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }

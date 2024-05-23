@@ -4,17 +4,16 @@ import (
 	"errors"
 	"io"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/block"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/footer"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/vhdfile"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/block"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/footer"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/vhdfile"
 )
 
 // DiskStream provides a logical stream over a VHD file.
 // The type exposes the VHD as a fixed VHD, regardless of actual underlying VHD type (dynamic, differencing
 // or fixed type)
-//
 type DiskStream struct {
 	offset          int64
 	size            int64
@@ -27,7 +26,6 @@ type DiskStream struct {
 }
 
 // StreamExtent describes a block range of a disk which contains data.
-//
 type StreamExtent struct {
 	Range            *common.IndexRange
 	OwnerVhdUniqueID *common.UUID
@@ -35,7 +33,6 @@ type StreamExtent struct {
 
 // CreateNewDiskStream creates a new DiskStream.
 // Parameter vhdPath is the path to VHD
-//
 func CreateNewDiskStream(vhdPath string) (*DiskStream, error) {
 	var err error
 	stream := &DiskStream{offset: 0, isClosed: false}
@@ -56,13 +53,11 @@ func CreateNewDiskStream(vhdPath string) (*DiskStream, error) {
 
 // GetDiskType returns the type of the disk, expected values are DiskTypeFixed, DiskTypeDynamic
 // or DiskTypeDifferencing
-//
 func (s *DiskStream) GetDiskType() footer.DiskType {
 	return s.vhdFile.GetDiskType()
 }
 
 // GetSize returns the length of the stream in bytes.
-//
 func (s *DiskStream) GetSize() int64 {
 	return s.size
 }
@@ -78,7 +73,6 @@ func (s *DiskStream) GetSize() int64 {
 // end of footer section after reading some but not all the bytes then Read won't return any error.
 //
 // Read satisfies io.Reader interface
-//
 func (s *DiskStream) Read(p []byte) (n int, err error) {
 	if s.offset >= s.size {
 		return 0, io.EOF
@@ -110,7 +104,6 @@ func (s *DiskStream) Read(p []byte) (n int, err error) {
 // means relative to the end. It returns the new offset and an error, if any.
 //
 // Seek satisfies io.Seeker interface
-//
 func (s *DiskStream) Seek(offset int64, whence int) (int64, error) {
 	switch whence {
 	default:
@@ -134,7 +127,6 @@ func (s *DiskStream) Seek(offset int64, whence int) (int64, error) {
 // Close closes the VHD file, rendering it unusable for I/O. It returns an error, if any.
 //
 // Close satisfies io.Closer interface
-//
 func (s *DiskStream) Close() error {
 	if !s.isClosed {
 		s.vhdFactory.Dispose(nil)
@@ -150,7 +142,6 @@ func (s *DiskStream) Close() error {
 // so returned extents slice will not contain such range.
 // For fixed disk - this method returns extents describing ranges of all blocks, to rule out fixed disk block
 // ranges containing zero bytes use DetectEmptyRanges function in upload package.
-//
 func (s *DiskStream) GetExtents() ([]*StreamExtent, error) {
 	extents := make([]*StreamExtent, 1)
 	blocksCount := s.vhdBlockFactory.GetBlockCount()
@@ -181,7 +172,6 @@ func (s *DiskStream) GetExtents() ([]*StreamExtent, error) {
 // so returned extents slice will not contain such range.
 // For fixed disk - this method returns extents describing ranges of all blocks, to rule out fixed disk block
 // ranges containing zero bytes use DetectEmptyRanges function in upload package.
-//
 func (s *DiskStream) EnumerateExtents(f func(*StreamExtent, error) bool) {
 	blocksCount := s.vhdBlockFactory.GetBlockCount()
 	i := int64(0)
@@ -214,7 +204,6 @@ func (s *DiskStream) EnumerateExtents(f func(*StreamExtent, error) bool) {
 // readFromBlocks identifies the blocks constituting the range rangeToRead, and read data from these
 // blocks into p. It returns the number of bytes read, which will be the minimum of sum of lengths
 // of all constituting range and len(p), provided there is no error.
-//
 func (s *DiskStream) readFromBlocks(rangeToRead *common.IndexRange, p []byte) (n int, err error) {
 	rangeToReadFromBlocks := s.vhdDataRange.Intersection(rangeToRead)
 	if rangeToReadFromBlocks == nil {
@@ -248,7 +237,6 @@ func (s *DiskStream) readFromBlocks(rangeToRead *common.IndexRange, p []byte) (n
 
 // readFromFooter reads the range rangeToRead from footer into p. It returns the number of bytes read, which
 // will be minimum of the given range length and len(p), provided there is no error.
-//
 func (s *DiskStream) readFromFooter(rangeToRead *common.IndexRange, p []byte) (n int, err error) {
 	rangeToReadFromFooter := s.vhdFooterRange.Intersection(rangeToRead)
 	if rangeToReadFromFooter == nil {
@@ -277,7 +265,6 @@ func (s *DiskStream) readFromFooter(rangeToRead *common.IndexRange, p []byte) (n
 }
 
 // byteToBlock returns the block index corresponding to the given byte position.
-//
 func (s *DiskStream) byteToBlock(position int64) int64 {
 	sectorsPerBlock := s.vhdBlockFactory.GetBlockSize() / vhdcore.VhdSectorLength
 	return position / vhdcore.VhdSectorLength / sectorsPerBlock

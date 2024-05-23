@@ -4,14 +4,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/bat"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/footer"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/header"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/bat"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/footer"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/header"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // FileFactory is a type to create VhdFile representing VHD in the local machine
-//
 type FileFactory struct {
 	vhdDir               string       // Path to the directory holding VHD file
 	fd                   *os.File     // File descriptor of the VHD file
@@ -20,7 +19,6 @@ type FileFactory struct {
 }
 
 // Create creates a new VhdFile representing a VHD in the local machine located at vhdPath
-//
 func (f *FileFactory) Create(vhdPath string) (*VhdFile, error) {
 	var err error
 	if f.fd, err = os.Open(vhdPath); err != nil {
@@ -41,7 +39,6 @@ func (f *FileFactory) Create(vhdPath string) (*VhdFile, error) {
 
 // CreateFromReaderAtReader creates a new VhdFile from a reader.ReadAtReader, which is a reader associated
 // with a VHD in the local machine. The parameter size is the size of the VHD in bytes
-//
 func (f *FileFactory) CreateFromReaderAtReader(r reader.ReadAtReader, size int64) (*VhdFile, error) {
 	vhdReader := reader.NewVhdReader(r, size)
 	vhdFooter, err := (footer.NewFactory(vhdReader)).Create()
@@ -95,7 +92,6 @@ func (f *FileFactory) CreateFromReaderAtReader(r reader.ReadAtReader, size int64
 
 // Dispose disposes this instance of VhdFileFactory and VhdFileFactory instances of parent and child
 // VHDs
-//
 func (f *FileFactory) Dispose(err error) {
 	if f.fd != nil {
 		f.fd.Close()
@@ -112,7 +108,6 @@ func (f *FileFactory) Dispose(err error) {
 }
 
 // Dispose disposes this instance of VhdFileFactory and VhdFileFactory instances of all ancestor VHDs
-//
 func (f *FileFactory) disposeUp(err error) {
 	if f.fd != nil {
 		f.fd.Close()
@@ -125,7 +120,6 @@ func (f *FileFactory) disposeUp(err error) {
 }
 
 // Dispose disposes this instance of VhdFileFactory and VhdFileFactory instances of all descendant VHDs
-//
 func (f *FileFactory) disposeDown(err error) {
 	if f.fd != nil {
 		f.fd.Close()

@@ -2,12 +2,11 @@ package parentlocator
 
 import (
 	"fmt"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // Factory type is used to create ParentLocator instance by reading one entry
 // in vhd header's parent-hard-disk-locator-info collection section.
-//
 type Factory struct {
 	vhdReader     *reader.VhdReader
 	locatorOffset int64
@@ -16,7 +15,6 @@ type Factory struct {
 // NewFactory creates a new instance of Factory, which can be used to create ParentLocator instance
 // by reading one entry from the vhd header's parent-hard-disk-locator-info collection,
 // locatorOffset is the offset of the entry to read, vhdReader is the reader to be used to read the entry.
-//
 func NewFactory(vhdReader *reader.VhdReader, locatorOffset int64) *Factory {
 	return &Factory{vhdReader: vhdReader, locatorOffset: locatorOffset}
 }
@@ -24,7 +22,6 @@ func NewFactory(vhdReader *reader.VhdReader, locatorOffset int64) *Factory {
 // Create creates a ParentLocator instance by reading one entry in vhd header's parent-hard-disk-locator-info
 // collection section of the disk. This function return error if any error occurs while reading or parsing
 // the parent locators table fields.
-//
 func (f *Factory) Create() (*ParentLocator, error) {
 	locator := &ParentLocator{}
 	var err error
@@ -58,7 +55,7 @@ func (f *Factory) Create() (*ParentLocator, error) {
 	}
 
 	fileLocator := make([]byte, locator.PlatformDataLength)
-	_, err = f.vhdReader.ReadBytes(locator.PlatformDataOffset, fileLocator)
+	_, err = f.vhdReader.ReadBytesAt(locator.PlatformDataOffset, fileLocator)
 	if err != nil {
 		err = NewParseError("ParentLocator", fmt.Errorf("Unable to resolve file locator: %v", err))
 		return errDone()
@@ -73,9 +70,8 @@ func (f *Factory) Create() (*ParentLocator, error) {
 // This function return error if no or fewer bytes could be read. The value is stored as 4 byte
 // value starting at offset 0 relative to the beginning of this parent-hard-disk-locator. This value
 // is stored in big-endian format.
-//
 func (f *Factory) readPlatformCode() (PlatformCode, error) {
-	value, err := f.vhdReader.ReadInt32(f.locatorOffset + 0)
+	value, err := f.vhdReader.ReadInt32At(f.locatorOffset + 0)
 	if err != nil {
 		return PlatformCodeNone, NewParseError("PlatformCode", err)
 	}
@@ -86,9 +82,8 @@ func (f *Factory) readPlatformCode() (PlatformCode, error) {
 // the parent hard disk file locator.  This function return error if no or fewer bytes could be read.
 // The value is stored as 4 byte value starting at offset 4 relative to the beginning parent-hard-disk-locator-info.
 // This value is stored in big-endian format.
-//
 func (f *Factory) readPlatformDataSpace() (int32, error) {
-	value, err := f.vhdReader.ReadInt32(f.locatorOffset + 4)
+	value, err := f.vhdReader.ReadInt32At(f.locatorOffset + 4)
 	if err != nil {
 		return -1, NewParseError("PlatformDataSpace", err)
 	}
@@ -99,9 +94,8 @@ func (f *Factory) readPlatformDataSpace() (int32, error) {
 // locator in bytes. This function return error if no or fewer bytes could be read. The value is stored
 // as 4 byte value starting at offset 8 relative to the beginning parent-hard-disk-locator-info. This value
 // is stored in big-endian format.
-//
 func (f *Factory) readPlatformDataLength() (int32, error) {
-	value, err := f.vhdReader.ReadInt32(f.locatorOffset + 8)
+	value, err := f.vhdReader.ReadInt32At(f.locatorOffset + 8)
 	if err != nil {
 		return -1, NewParseError("PlatformDataLength", err)
 	}
@@ -112,9 +106,8 @@ func (f *Factory) readPlatformDataLength() (int32, error) {
 // This function return error if no or fewer bytes could be read. The value is stored as 4 byte
 // value starting at offset 12 relative to the beginning parent-hard-disk-locator-info.
 // This value is stored in big-endian format.
-//
 func (f *Factory) readReserved() (int32, error) {
-	value, err := f.vhdReader.ReadInt32(f.locatorOffset + 12)
+	value, err := f.vhdReader.ReadInt32At(f.locatorOffset + 12)
 	if err != nil {
 		return -1, NewParseError("Reserved", err)
 	}
@@ -125,9 +118,8 @@ func (f *Factory) readReserved() (int32, error) {
 // specific file locator data is stored. Call to this function is panic if no or fewer bytes could be read.
 // The value is stored as 4 byte value starting at offset 16 relative to the beginning parent-hard-disk-locator-info.
 // This value is stored in big-endian format.
-//
 func (f *Factory) readPlatformDataOffset() (int64, error) {
-	value, err := f.vhdReader.ReadInt64(f.locatorOffset + 16)
+	value, err := f.vhdReader.ReadInt64At(f.locatorOffset + 16)
 	if err != nil {
 		return -1, NewParseError("PlatformDataOffset", err)
 	}

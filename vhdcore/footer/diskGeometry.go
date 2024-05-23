@@ -3,11 +3,10 @@ package footer
 import (
 	"fmt"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
 )
 
 // DiskGeometry represents the cylinder, heads and sectors (CHS) per track.
-//
 type DiskGeometry struct {
 	// Offset = 0, Size = 2
 	// Stored in big-endian format
@@ -21,7 +20,6 @@ type DiskGeometry struct {
 // CreateNewDiskGeometry creates a new DiskGeometry from the given virtual
 // size. CHS field values are calculated based on the total data sectors
 // present in the disk image.
-//
 func CreateNewDiskGeometry(virtualSize int64) *DiskGeometry {
 	// Total data sectors present in the disk image
 	var totalSectors = virtualSize / vhdcore.VhdSectorLength
@@ -77,7 +75,6 @@ func CreateNewDiskGeometry(virtualSize int64) *DiskGeometry {
 }
 
 // CreateCopy creates a copy of this instance
-//
 func (d *DiskGeometry) CreateCopy() *DiskGeometry {
 	return &DiskGeometry{
 		Cylinder: d.Cylinder,
@@ -88,7 +85,6 @@ func (d *DiskGeometry) CreateCopy() *DiskGeometry {
 
 // Equals returns true if this and other points to the same instance
 // or if CHS fields of pointed instances are same
-//
 func (d *DiskGeometry) Equals(other *DiskGeometry) bool {
 	if other == nil {
 		return false
@@ -98,7 +94,6 @@ func (d *DiskGeometry) Equals(other *DiskGeometry) bool {
 }
 
 // String returns the string representation of this range, this satisfies stringer interface.
-//
 func (d *DiskGeometry) String() string {
 	return fmt.Sprintf("Cylinder:%d Heads:%d Sectors:%d", d.Cylinder, d.Heads, d.Sectors)
 }

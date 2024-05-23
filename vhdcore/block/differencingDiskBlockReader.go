@@ -1,15 +1,14 @@
 package block
 
 import (
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/bat"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/footer"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/bat"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/footer"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // DifferencingDiskBlockReader type satisfies BlockDataReader interface,
 // implementation of BlockDataReader::Read by this type can read the 'data' section
 // of a differencing disk's block.
-//
 type DifferencingDiskBlockReader struct {
 	vhdReader            *reader.VhdReader
 	blockAllocationTable *bat.BlockAllocationTable
@@ -22,7 +21,6 @@ type DifferencingDiskBlockReader struct {
 // The parameter vhdReader is the reader to read the disk
 // The parameter blockAllocationTable represents the disk's BAT
 // The parameter blockSizeInBytes is the size of the differencing disk block
-//
 func NewDifferencingDiskBlockReader(vhdReader *reader.VhdReader, blockAllocationTable *bat.BlockAllocationTable, blockSizeInBytes uint32) *DifferencingDiskBlockReader {
 	return &DifferencingDiskBlockReader{
 		vhdReader:            vhdReader,
@@ -34,7 +32,6 @@ func NewDifferencingDiskBlockReader(vhdReader *reader.VhdReader, blockAllocation
 
 // Read reads the data in a block of a differencing disk
 // The parameter block represents the block whose 'data' section to read
-//
 func (r *DifferencingDiskBlockReader) Read(block *Block) ([]byte, error) {
 	blockIndex := block.BlockIndex
 	if !r.blockAllocationTable.HasData(blockIndex) {

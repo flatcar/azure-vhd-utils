@@ -2,7 +2,6 @@ package footer
 
 // DiskType type represents the type of the disk, Value is stored in the footer
 // in big-endian format.
-//
 type DiskType uint32
 
 const (
@@ -23,7 +22,6 @@ const (
 // String returns the string representation of the DiskType. If the int type value
 // does not match with the predefined disk types then this function return the
 // string "UnknownDiskType"
-//
 func (d DiskType) String() string {
 	switch d {
 	case DiskTypeFixed:

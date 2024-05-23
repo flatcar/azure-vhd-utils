@@ -7,16 +7,16 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/storage"
-	"github.com/Microsoft/azure-vhd-utils/upload/concurrent"
-	"github.com/Microsoft/azure-vhd-utils/upload/progress"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream"
+
+	"github.com/flatcar/azure-vhd-utils/upload/concurrent"
+	"github.com/flatcar/azure-vhd-utils/upload/progress"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/diskstream"
 )
 
 // DiskUploadContext type describes VHD upload context, this includes the disk stream to read from, the ranges of
 // the stream to read, the destination blob and it's container, the client to communicate with Azure storage and
 // the number of parallel go-routines to use for upload.
-//
 type DiskUploadContext struct {
 	VhdStream             *diskstream.DiskStream    // The stream whose ranges needs to be uploaded
 	AlreadyProcessedBytes int64                     // The size in bytes already uploaded
@@ -30,13 +30,11 @@ type DiskUploadContext struct {
 }
 
 // oneMB is one MegaByte
-//
 const oneMB = float64(1048576)
 
 // Upload uploads the disk ranges described by the parameter cxt, this parameter describes the disk stream to
 // read from, the ranges of the stream to read, the destination blob and it's container, the client to communicate
 // with Azure storage and the number of parallel go-routines to use for upload.
-//
 func Upload(cxt *DiskUploadContext) error {
 	// Get the channel that contains stream of disk data to upload
 	dataWithRangeChan, streamReadErrChan := GetDataWithRanges(cxt.VhdStream, cxt.UploadableRanges)
@@ -136,7 +134,6 @@ L:
 // It returns two channels, a data channel to stream the disk ranges and a channel to send any error while reading
 // the disk. On successful completion the data channel will be closed. the caller must not expect any more value in
 // the data channel if the error channel is signaled.
-//
 func GetDataWithRanges(stream *diskstream.DiskStream, ranges []*common.IndexRange) (<-chan *DataWithRange, <-chan error) {
 	dataWithRangeChan := make(chan *DataWithRange, 0)
 	errorChan := make(chan error, 0)
@@ -165,7 +162,6 @@ func GetDataWithRanges(stream *diskstream.DiskStream, ranges []*common.IndexRang
 
 // readAndPrintProgress reads the progress records from the given progress channel and output it. It reads the
 // progress record until the channel is closed.
-//
 func readAndPrintProgress(progressChan <-chan *progress.Record, resume bool) {
 	var spinChars = [4]rune{'\\', '|', '/', '-'}
 	s := time.Time{}

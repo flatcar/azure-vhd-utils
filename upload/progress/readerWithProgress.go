@@ -6,7 +6,6 @@ import (
 )
 
 // ReaderWithProgress wraps an io.ReadCloser, it track and report the read progress.
-//
 type ReaderWithProgress struct {
 	ProgressChan    <-chan *Record
 	innerReadCloser io.ReadCloser
@@ -17,7 +16,6 @@ type ReaderWithProgress struct {
 // read progress needs to be tracked, sizeInBytes is the total size of the inner stream in bytes,
 // progressIntervalInSeconds is the interval at which the read progress needs to be send to ProgressChan channel.
 // After using the this reader, it must be closed by calling Close method to avoid goroutine leak.
-//
 func NewReaderWithProgress(inner io.ReadCloser, sizeInBytes int64, progressIntervalInSeconds time.Duration) *ReaderWithProgress {
 	r := &ReaderWithProgress{}
 	r.innerReadCloser = inner
@@ -28,7 +26,6 @@ func NewReaderWithProgress(inner io.ReadCloser, sizeInBytes int64, progressInter
 
 // Read reads up to len(b) bytes from the inner stream. It returns the number of bytes read and an error, if any.
 // EOF is signaled when no more data to read and n will set to 0.
-//
 func (r *ReaderWithProgress) Read(p []byte) (n int, err error) {
 	n, err = r.innerReadCloser.Read(p)
 	if err == nil {
@@ -38,7 +35,6 @@ func (r *ReaderWithProgress) Read(p []byte) (n int, err error) {
 }
 
 // Close closes the inner stream and stop reporting read progress in the ProgressChan chan.
-//
 func (r *ReaderWithProgress) Close() error {
 	err := r.innerReadCloser.Close()
 	r.progressStatus.Close()

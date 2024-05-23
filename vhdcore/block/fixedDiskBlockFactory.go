@@ -4,8 +4,8 @@ import (
 	"log"
 	"math"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
 )
 
 // FixedDiskBlockFactory is a type which is used for following purposes
@@ -14,7 +14,6 @@ import (
 // To get the block size of the block in fixed disk
 // To get a Sector instance representing sector of fixed disk's block
 // To get the logical footer range of the fixed disk
-//
 type FixedDiskBlockFactory struct {
 	params           *FactoryParams
 	sectorFactory    *SectorFactory
@@ -28,7 +27,6 @@ type FixedDiskBlockFactory struct {
 // NewFixedDiskBlockFactoryWithDefaultBlockSize creates a FixedDiskBlockFactory instance which can
 // be used to create a Block object representing fixed disk block of default size 512 KB.
 // parameter params contains header, footer of the fixed disk and reader to read the disk.
-//
 func NewFixedDiskBlockFactoryWithDefaultBlockSize(params *FactoryParams) *FixedDiskBlockFactory {
 	return NewFixedDiskBlockFactory(params, vhdcore.VhdDefaultBlockSize)
 }
@@ -37,7 +35,6 @@ func NewFixedDiskBlockFactoryWithDefaultBlockSize(params *FactoryParams) *FixedD
 // Block objects representing fixed disk block of a specific size, parameter params contains header,
 // footer of the fixed disk and reader to read the disk, parameter blockSize represents the size
 // of blocks in the fixed disk
-//
 func NewFixedDiskBlockFactory(params *FactoryParams, blockSize int64) *FixedDiskBlockFactory {
 	blockFactory := &FixedDiskBlockFactory{params: params}
 
@@ -65,20 +62,17 @@ func NewFixedDiskBlockFactory(params *FactoryParams, blockSize int64) *FixedDisk
 }
 
 // GetBlockCount returns the number of blocks in the fixed disk.
-//
 func (f *FixedDiskBlockFactory) GetBlockCount() int64 {
 	return f.blockCount
 }
 
 // GetBlockSize returns the size of the block in bytes of the fixed disk.
-//
 func (f *FixedDiskBlockFactory) GetBlockSize() int64 {
 	return f.blockSize
 }
 
 // GetFooterRange returns the logical range of the footer of the fixed disk, logical range of footer
 // is the absolute start and end byte offset of the footer.
-//
 func (f *FixedDiskBlockFactory) GetFooterRange() *common.IndexRange {
 	footerStartIndex := f.params.VhdReader.Size - vhdcore.VhdFooterSize
 	return common.NewIndexRangeFromLength(footerStartIndex, vhdcore.VhdFooterSize)
@@ -86,7 +80,6 @@ func (f *FixedDiskBlockFactory) GetFooterRange() *common.IndexRange {
 
 // Create returns an instance of Block which represents a fixed disk block, the parameter blockIndex
 // identifies the block.
-//
 func (f *FixedDiskBlockFactory) Create(blockIndex uint32) (*Block, error) {
 	if f.cachedFixedBlock == nil || f.cachedFixedBlock.BlockIndex != blockIndex {
 		var logicalRange *common.IndexRange
@@ -112,7 +105,6 @@ func (f *FixedDiskBlockFactory) Create(blockIndex uint32) (*Block, error) {
 // GetSector returns an instance of Sector in a fixed disk, parameter block describes the block containing the
 // sector, the parameter sectorIndex identifies the sector in the block. This function return error if the sector
 // cannot be created due to any read error or if the requested sector index is invalid.
-//
 func (f *FixedDiskBlockFactory) GetSector(block *Block, sectorIndex uint32) (*Sector, error) {
 	blockIndex := block.BlockIndex
 	if block.IsEmpty {
@@ -124,7 +116,6 @@ func (f *FixedDiskBlockFactory) GetSector(block *Block, sectorIndex uint32) (*Se
 
 // getExtraBlockLogicalRange returns the IndexRange representing the additional block if any. Additional block
 // is the last block whose size < FixedDiskBlockFactory.BlockSize
-//
 func (f *FixedDiskBlockFactory) getExtraBlockLogicalRange() *common.IndexRange {
 	if f.extraBlockIndex == nil {
 		log.Panicf("Unexpected state, extraBlockIndex not set")

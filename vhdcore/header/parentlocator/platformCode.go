@@ -4,7 +4,6 @@ import "fmt"
 
 // The PlatformCode describes which platform-specific format is used for the file locator
 // This is the type of PlatformCode field in ParentLocator type.
-//
 type PlatformCode int32
 
 const (
@@ -36,7 +35,6 @@ const (
 // String returns the string representation of the PlatformCode. If the int platform code
 // value does not match with the predefined PlatformCodes then this function convert the
 // int to string and return
-//
 func (p PlatformCode) String() string {
 	switch p {
 	case PlatformCodeNone:

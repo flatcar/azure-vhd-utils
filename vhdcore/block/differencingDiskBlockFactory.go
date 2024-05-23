@@ -1,9 +1,9 @@
 package block
 
 import (
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/block/bitmap"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/block/bitmap"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
 )
 
 // DifferencingDiskBlockFactory is a type which is used for following purposes
@@ -12,7 +12,6 @@ import (
 // To get the block size of the block in differencing disk
 // To get a Sector instance representing sector of differencing disk's block
 // To get the logical footer range of fixed disk generated from the differencing disk and it's parents.
-//
 type DifferencingDiskBlockFactory struct {
 	params          *FactoryParams
 	bitmapFactory   *bitmap.Factory
@@ -24,7 +23,6 @@ type DifferencingDiskBlockFactory struct {
 // NewDifferencingDiskBlockFactory creates a DifferencingDiskBlockFactory instance which can be used to
 // create a Block objects representing differential disk block of a size specified in header BlockSize
 // field parameter vhdFile represents the differencing disk.
-//
 func NewDifferencingDiskBlockFactory(params *FactoryParams) *DifferencingDiskBlockFactory {
 	blockFactory := &DifferencingDiskBlockFactory{params: params}
 
@@ -43,20 +41,17 @@ func NewDifferencingDiskBlockFactory(params *FactoryParams) *DifferencingDiskBlo
 }
 
 // GetBlockCount returns the number of blocks in the differential disk.
-//
 func (f *DifferencingDiskBlockFactory) GetBlockCount() int64 {
 	return int64(f.params.BlockAllocationTable.BATEntriesCount)
 }
 
 // GetBlockSize returns the size of the 'data section' of block in bytes in the differential disk.
-//
 func (f *DifferencingDiskBlockFactory) GetBlockSize() int64 {
 	return int64(f.params.VhdHeader.BlockSize)
 }
 
 // GetFooterRange returns the logical range of the footer when converting this differential vhd to
 // fixed logical range of footer is the absolute start and end byte offset of the footer.
-//
 func (f *DifferencingDiskBlockFactory) GetFooterRange() *common.IndexRange {
 	return common.NewIndexRangeFromLength(f.GetBlockCount()*f.GetBlockSize(), vhdcore.VhdFooterSize)
 }
@@ -65,7 +60,6 @@ func (f *DifferencingDiskBlockFactory) GetFooterRange() *common.IndexRange {
 // identifies the block. If the block to be read is marked as empty in the differencing disk BAT then this
 // method will query parent disk for the same block. This function return error if the block cannot be created
 // due to any read error.
-//
 func (f *DifferencingDiskBlockFactory) Create(blockIndex uint32) (*Block, error) {
 	if !f.params.BlockAllocationTable.HasData(blockIndex) {
 		if f.cachedBlock == nil || f.cachedBlock.BlockIndex != blockIndex {
@@ -104,7 +98,6 @@ func (f *DifferencingDiskBlockFactory) Create(blockIndex uint32) (*Block, error)
 // read is marked as empty in the block's bitmap then this method will query parent disk for the same sector.
 // This function return error if the sector cannot be created due to any read error or if the requested sector
 // index is invalid.
-//
 func (f *DifferencingDiskBlockFactory) GetSector(block *Block, sectorIndex uint32) (*Sector, error) {
 	blockIndex := block.BlockIndex
 	if block.IsEmpty {
@@ -132,7 +125,6 @@ func (f *DifferencingDiskBlockFactory) GetSector(block *Block, sectorIndex uint3
 
 // GetBitmapFactory returns an instance of BitmapFactory that can be used to create the bitmap of a block
 // by reading block from differencing disk.
-//
 func (f *DifferencingDiskBlockFactory) GetBitmapFactory() *bitmap.Factory {
 	return f.bitmapFactory
 }

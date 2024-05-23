@@ -3,14 +3,13 @@ package block
 import (
 	"io"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/footer"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/footer"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // FixedDiskBlockReader type satisfies BlockDataReader interface,
 // implementation of BlockDataReader::Read by this type can read the data from a block
 // of a fixed disk.
-//
 type FixedDiskBlockReader struct {
 	vhdReader        *reader.VhdReader
 	blockSizeInBytes uint32
@@ -20,7 +19,6 @@ type FixedDiskBlockReader struct {
 // a fixed disk block.
 // The parameter vhdReader is the reader to read the disk
 // The parameter blockSizeInBytes is the size of the fixed disk block
-//
 func NewFixedDiskBlockReader(vhdReader *reader.VhdReader, blockSizeInBytes uint32) *FixedDiskBlockReader {
 	return &FixedDiskBlockReader{
 		vhdReader:        vhdReader,
@@ -30,12 +28,11 @@ func NewFixedDiskBlockReader(vhdReader *reader.VhdReader, blockSizeInBytes uint3
 
 // Read reads the data in a block of a fixed disk
 // The parameter block represents the block to read
-//
 func (r *FixedDiskBlockReader) Read(block *Block) ([]byte, error) {
 	blockIndex := block.BlockIndex
 	blockByteOffset := int64(blockIndex) * int64(r.blockSizeInBytes)
 	blockDataBuffer := make([]byte, block.LogicalRange.Length())
-	n, err := r.vhdReader.ReadBytes(blockByteOffset, blockDataBuffer)
+	n, err := r.vhdReader.ReadBytesAt(blockByteOffset, blockDataBuffer)
 	if err == io.ErrUnexpectedEOF {
 		return blockDataBuffer[:n], nil
 	}

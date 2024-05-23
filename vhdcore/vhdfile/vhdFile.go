@@ -3,15 +3,14 @@ package vhdfile
 import (
 	"fmt"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/bat"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/block"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/footer"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/header"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/reader"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/bat"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/block"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/footer"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/header"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/reader"
 )
 
 // VhdFile represents a VHD.
-//
 type VhdFile struct {
 	// Footer represents the disk's footer.
 	Footer *footer.Footer
@@ -31,14 +30,12 @@ type VhdFile struct {
 
 // GetDiskType returns the type of the disk. Possible values are DiskTypeFixed, DiskTypeDynamic
 // and DiskTypeDifferencing.
-//
 func (f *VhdFile) GetDiskType() footer.DiskType {
 	return f.Footer.DiskType
 }
 
 // GetBlockFactory returns a BlockFactory instance that can be used to create Block instances
 // that represents blocks in the disk.
-//
 func (f *VhdFile) GetBlockFactory() (block.Factory, error) {
 	params := &block.FactoryParams{
 		VhdHeader: f.Header,
@@ -82,7 +79,6 @@ func (f *VhdFile) GetBlockFactory() (block.Factory, error) {
 // GetIdentityChain returns VHD identity chain, for differencing disk this will be a slice with
 // unique ids of this and all it's ancestor disks. For fixed and dynamic disk, this will be a
 // slice with one entry representing disk's unique id.
-//
 func (f *VhdFile) GetIdentityChain() []string {
 	ids := []string{f.Footer.UniqueID.String()}
 	for p := f.Parent; p != nil; p = p.Parent {

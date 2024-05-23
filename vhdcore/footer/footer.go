@@ -4,14 +4,13 @@ import (
 	"bytes"
 	"time"
 
-	"github.com/Microsoft/azure-vhd-utils/vhdcore"
-	"github.com/Microsoft/azure-vhd-utils/vhdcore/common"
+	"github.com/flatcar/azure-vhd-utils/vhdcore"
+	"github.com/flatcar/azure-vhd-utils/vhdcore/common"
 )
 
 // Footer represents the footer of the vhd, the size of the footer is 512 bytes.
 // The last 512 bytes of the disk is footer.  In case of dynamic and differential
 // vhds, the footer is replicated at the beginning of the disk as well.
-//
 type Footer struct {
 	// Offset =  0, Size = 8
 	Cookie *vhdcore.Cookie
@@ -53,7 +52,6 @@ type Footer struct {
 }
 
 // CreateCopy creates and returns a deep copy of this instance.
-//
 func (v *Footer) CreateCopy() *Footer {
 	return &Footer{
 		Cookie:             v.Cookie.CreateCopy(),
@@ -78,7 +76,6 @@ func (v *Footer) CreateCopy() *Footer {
 
 // Equal returns true if this and other points to the same instance or if contents
 // of the fields of these two instances are same.
-//
 func (v *Footer) Equal(other *Footer) bool {
 	if other == nil {
 		return false
