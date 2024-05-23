@@ -98,6 +98,42 @@ func ChunkRangesBySize(ranges []*IndexRange, chunkSizeInBytes int64) []*IndexRan
 	return chunks
 }
 
+// ChunkRangesBySizeWithQuant works like ChunkRangesBySize, but makes
+// sure that the generated ranges' boundaries are at quantSizeInBytes
+// multiples. chunkSizeInBytes must be a multiple of quantSizeInBytes.
+func ChunkRangesBySizeWithQuant(ranges []*IndexRange, chunkSizeInBytes, quantSizeInBytes int64) []*IndexRange {
+	roundedRanges := make([]*IndexRange, 0, len(ranges))
+	var prevRange *IndexRange
+
+	for _, r := range ranges {
+		rounded := r.RoundedUp(quantSizeInBytes)
+		if prevRange != nil {
+			if prevRange.Includes(rounded) {
+				continue
+			}
+			// The expectation here is that the "rounded"
+			// range should be after "prevRange". So if
+			// there is an overlap between them, then the
+			// overlap covers the end of "prevRange" and a
+			// beginning of "rounded". Thus we shorten the
+			// "rounded" range by moving its start, so it
+			// becomes Adjacent to "prevRange". We know
+			// that moving the Start won't make the
+			// "rounded" range empty, because we already
+			// made sure above that "prevRange" does not
+			// include "rounded".
+			overlap := prevRange.Intersection(rounded)
+			if overlap != nil {
+				rounded.Start += overlap.Length()
+			}
+		}
+		roundedRanges = append(roundedRanges, rounded)
+		prevRange = rounded
+	}
+
+	return ChunkRangesBySize(roundedRanges, chunkSizeInBytes)
+}
+
 // Length returns number of sequential integers in the range.
 func (ir *IndexRange) Length() int64 {
 	return ir.End - ir.Start + 1
@@ -148,7 +184,7 @@ func (ir *IndexRange) Intersects(other *IndexRange) bool {
 }
 
 // Intersection computes the range representing the intersection of two ranges, a return
-// value nil indicates the ranges does not intersects.
+// value nil indicates the ranges do not intersect.
 func (ir *IndexRange) Intersection(other *IndexRange) *IndexRange {
 	start := ir.Start
 	if start < other.Start {
@@ -291,6 +327,22 @@ func (ir *IndexRange) Merge(other *IndexRange) *IndexRange {
 	}
 
 	return NewIndexRange(other.Start, ir.End)
+}
+
+// RoundedUp produces a range copy but with its start moved back to be
+// a multiple of the passed size and its end moved further so the
+// range's length is a multiple of the passed size.
+func (ir *IndexRange) RoundedUp(size int64) *IndexRange {
+	start := ir.Start
+	if remainder := start % size; remainder > 0 {
+		start = start - remainder
+	}
+	nr := NewIndexRange(start, ir.End)
+	length := nr.Length()
+	if remainder := length % size; remainder > 0 {
+		nr.End += size - remainder
+	}
+	return nr
 }
 
 // PartitionBy produces a slice of adjacent ranges of same size, first range in the slice starts

@@ -54,7 +54,8 @@ func vhdUploadCmdHandler() cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			const PageBlobPageSize int64 = 2 * 1024 * 1024
+			const PageBlobPageSize int64 = 512
+			const PageBlobPageSetSize int64 = 4 * 1024 * 1024
 
 			localVHDPath := c.String("localvhdpath")
 			if localVHDPath == "" {
@@ -142,7 +143,7 @@ func vhdUploadCmdHandler() cli.Command {
 				createBlob(blobServiceClient, containerName, blobName, diskStream.GetSize(), localMetaData)
 			}
 
-			uploadableRanges, err := upload.LocateUploadableRanges(diskStream, rangesToSkip, PageBlobPageSize)
+			uploadableRanges, err := upload.LocateUploadableRanges(diskStream, rangesToSkip, PageBlobPageSize, PageBlobPageSetSize)
 			if err != nil {
 				return err
 			}
@@ -155,7 +156,7 @@ func vhdUploadCmdHandler() cli.Command {
 			cxt := &upload.DiskUploadContext{
 				VhdStream:             diskStream,
 				UploadableRanges:      uploadableRanges,
-				AlreadyProcessedBytes: common.TotalRangeLength(rangesToSkip),
+				AlreadyProcessedBytes: diskStream.GetSize() - common.TotalRangeLength(uploadableRanges),
 				BlobServiceClient:     blobServiceClient,
 				ContainerName:         containerName,
 				BlobName:              blobName,
