@@ -1,12 +1,15 @@
 package upload
 
 import (
+	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
 	"time"
 
-	"github.com/Azure/azure-sdk-for-go/storage"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/blob"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/pageblob"
 
 	"github.com/flatcar/azure-vhd-utils/upload/concurrent"
 	"github.com/flatcar/azure-vhd-utils/upload/progress"
@@ -14,23 +17,34 @@ import (
 	"github.com/flatcar/azure-vhd-utils/vhdcore/diskstream"
 )
 
-// DiskUploadContext type describes VHD upload context, this includes the disk stream to read from, the ranges of
-// the stream to read, the destination blob and it's container, the client to communicate with Azure storage and
-// the number of parallel go-routines to use for upload.
+// DiskUploadContext type describes VHD upload context, this includes the disk stream to read from, the ranges of the
+// stream to read, the client representing the destination blob in its container and used to communicate with Azure
+// storage and the number of parallel go-routines to use for upload.
 type DiskUploadContext struct {
-	VhdStream             *diskstream.DiskStream    // The stream whose ranges needs to be uploaded
-	AlreadyProcessedBytes int64                     // The size in bytes already uploaded
-	UploadableRanges      []*common.IndexRange      // The subset of stream ranges to be uploaded
-	BlobServiceClient     storage.BlobStorageClient // The client to make Azure blob service API calls
-	ContainerName         string                    // The container in which page blob resides
-	BlobName              string                    // The destination page blob name
-	Parallelism           int                       // The number of concurrent goroutines to be used for upload
-	Resume                bool                      // Indicate whether this is a new or resuming upload
-	MD5Hash               []byte                    // MD5Hash to be set in the page blob properties once upload finishes
+	VhdStream             *diskstream.DiskStream // The stream whose ranges needs to be uploaded
+	AlreadyProcessedBytes int64                  // The size in bytes already uploaded
+	UploadableRanges      []*common.IndexRange   // The subset of stream ranges to be uploaded
+	PageblobClient        *pageblob.Client       // The client to make Azure blob service API calls
+	Parallelism           int                    // The number of concurrent goroutines to be used for upload
+	Resume                bool                   // Indicate whether this is a new or resuming upload
 }
 
 // oneMB is one MegaByte
 const oneMB = float64(1048576)
+
+type byteReadSeekCloser struct {
+	*bytes.Reader
+}
+
+func newByteReadSeekCloser(b []byte) io.ReadSeekCloser {
+	return byteReadSeekCloser{bytes.NewReader(b)}
+}
+
+func (byteReadSeekCloser) Close() error {
+	return nil
+}
+
+var _ io.ReadSeekCloser = byteReadSeekCloser{}
 
 // Upload uploads the disk ranges described by the parameter cxt, this parameter describes the disk stream to
 // read from, the ranges of the stream to read, the destination blob and it's container, the client to communicate
@@ -84,12 +98,12 @@ L:
 			//
 			req := &concurrent.Request{
 				Work: func() error {
-					err := cxt.BlobServiceClient.PutPage(cxt.ContainerName,
-						cxt.BlobName,
-						dataWithRange.Range.Start,
-						dataWithRange.Range.End,
-						storage.PageWriteTypeUpdate,
-						dataWithRange.Data,
+					_, err := cxt.PageblobClient.UploadPages(context.TODO(),
+						newByteReadSeekCloser(dataWithRange.Data),
+						blob.HTTPRange{
+							Offset: dataWithRange.Range.Start,
+							Count:  dataWithRange.Range.Length(),
+						},
 						nil)
 					if err == nil {
 						uploadProgress.ReportBytesProcessedCount(dataWithRange.Range.Length())
