@@ -46,34 +46,34 @@ func (byteReadSeekCloser) Close() error {
 
 var _ io.ReadSeekCloser = byteReadSeekCloser{}
 
-// Upload uploads the disk ranges described by the parameter cxt, this parameter describes the disk stream to
+// Upload uploads the disk ranges described by the parameter uctx, this parameter describes the disk stream to
 // read from, the ranges of the stream to read, the destination blob and it's container, the client to communicate
 // with Azure storage and the number of parallel go-routines to use for upload.
-func Upload(cxt *DiskUploadContext) error {
+func Upload(ctx context.Context, uctx *DiskUploadContext) error {
 	// Get the channel that contains stream of disk data to upload
-	dataWithRangeChan, streamReadErrChan := GetDataWithRanges(cxt.VhdStream, cxt.UploadableRanges)
+	dataWithRangeChan, streamReadErrChan := GetDataWithRanges(uctx.VhdStream, uctx.UploadableRanges)
 
 	// The channel to send upload request to load-balancer
 	requtestChan := make(chan *concurrent.Request, 0)
 
-	// Prepare and start the load-balancer that load request across 'cxt.Parallelism' workers
-	loadBalancer := concurrent.NewBalancer(cxt.Parallelism)
+	// Prepare and start the load-balancer that load request across 'uctx.Parallelism' workers
+	loadBalancer := concurrent.NewBalancer(uctx.Parallelism)
 	loadBalancer.Init()
 	workerErrorChan, allWorkersFinishedChan := loadBalancer.Run(requtestChan)
 
 	// Calculate the actual size of the data to upload
 	uploadSizeInBytes := int64(0)
-	for _, r := range cxt.UploadableRanges {
+	for _, r := range uctx.UploadableRanges {
 		uploadSizeInBytes += r.Length()
 	}
-	fmt.Printf("\nEffective upload size: %.2f MB (from %.2f MB originally)", float64(uploadSizeInBytes)/oneMB, float64(cxt.VhdStream.GetSize())/oneMB)
+	fmt.Printf("\nEffective upload size: %.2f MB (from %.2f MB originally)", float64(uploadSizeInBytes)/oneMB, float64(uctx.VhdStream.GetSize())/oneMB)
 
 	// Prepare and start the upload progress tracker
-	uploadProgress := progress.NewStatus(cxt.Parallelism, cxt.AlreadyProcessedBytes, uploadSizeInBytes, progress.NewComputestateDefaultSize())
+	uploadProgress := progress.NewStatus(uctx.Parallelism, uctx.AlreadyProcessedBytes, uploadSizeInBytes, progress.NewComputestateDefaultSize())
 	progressChan := uploadProgress.Run()
 
 	// read progress status from progress tracker and print it
-	go readAndPrintProgress(progressChan, cxt.Resume)
+	go readAndPrintProgress(progressChan, uctx.Resume)
 
 	// listen for errors reported by workers and print it
 	var allWorkSucceeded = true
@@ -98,7 +98,8 @@ L:
 			//
 			req := &concurrent.Request{
 				Work: func() error {
-					_, err := cxt.PageblobClient.UploadPages(context.TODO(),
+					_, err := uctx.PageblobClient.UploadPages(
+						ctx,
 						newByteReadSeekCloser(dataWithRange.Data),
 						blob.HTTPRange{
 							Offset: dataWithRange.Range.Start,
