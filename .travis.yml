@@ -2,7 +2,7 @@ language: go
 
 go:
   - 1.11
-  - master
+  - main
 
 env:
   - GO111MODULE=on
@@ -10,7 +10,7 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-  - go: master
+  - go: main
 
 script:
   - make all
